@@ -1,5 +1,7 @@
 # Research Timeline
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21830095.svg)](https://doi.org/10.5281/zenodo.21830095)
+
 A simple CLI tool for tracking research progress - designed for independent researchers.
 
 ## Features
