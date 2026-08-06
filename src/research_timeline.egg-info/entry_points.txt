@@ -1,0 +1,2 @@
+[console_scripts]
+research-timeline = research_timeline.cli:main
