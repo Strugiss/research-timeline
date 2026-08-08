@@ -96,7 +96,7 @@ pytest tests/ -v       # 14 tests
 
 - Baker, M. (2016) "1,500 scientists lift the lid on reproducibility", *Nature* 533, 452–454. doi:10.1038/533452a
 - Zenodo archive: 10.5281/zenodo.21830143
-- Software Heritage archive: `swh:1:snp:dd1f61f06a2728e11da0005d6cef0b49fb37e2f3`
+- Software Heritage archive: `swh:1:snp:d60633d275c439b3973b506bb00f4b974e62ec0f`
 - N47Lab research program (PASM): https://github.com/Strugiss/N47Lab-QuantumResearch
 - IBM Quantum: https://quantum.ibm.com
 - JSON Schema draft-07: https://json-schema.org

@@ -4,7 +4,7 @@
 [![CI](https://github.com/Strugiss/research-timeline/actions/workflows/ci.yml/badge.svg)](https://github.com/Strugiss/research-timeline/actions/workflows/ci.yml)
 [![Python](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![SWH](https://archive.softwareheritage.org/badge/swh:1:snp:dd1f61f06a2728e11da0005d6cef0b49fb37e2f3/)](https://archive.softwareheritage.org/swh:1:snp:dd1f61f06a2728e11da0005d6cef0b49fb37e2f3)
+[![SWH](https://archive.softwareheritage.org/badge/swh:1:snp:d60633d275c439b3973b506bb00f4b974e62ec0f/)](https://archive.softwareheritage.org/swh:1:snp:d60633d275c439b3973b506bb00f4b974e62ec0f)
 
 Track, visualize, and export research timelines — from first AI interaction to scientific discovery.
 
@@ -91,7 +91,7 @@ pytest tests/ -v
 ## Software Heritage
 
 This repository is archived in permanent storage:
-`swh:1:snp:dd1f61f06a2728e11da0005d6cef0b49fb37e2f3`
+`swh:1:snp:d60633d275c439b3973b506bb00f4b974e62ec0f`
 
 ## License
 
