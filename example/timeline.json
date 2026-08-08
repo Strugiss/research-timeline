@@ -1,0 +1,109 @@
+{
+  "project": {
+    "name": "PASM DTC Discovery",
+    "description": "Observation of Classical Prethermal DTC on IBM Heron",
+    "domain": "quantum"
+  },
+  "author": {
+    "name": "N47Lab",
+    "affiliation": "independent",
+    "orcid": null,
+    "background": "without academic degrees",
+    "ai_role": "cognitive_prosthesis"
+  },
+  "events": [
+    {
+      "id": "T0",
+      "type": "T0",
+      "date": "2026-06-06",
+      "description": "First AI interaction: setup, theory, protocol design",
+      "tags": ["setup", "theory", "protocol_design"]
+    },
+    {
+      "id": "T1",
+      "type": "T1",
+      "date": "2026-07-31",
+      "description": "First commit: 14 QPU experiments, weighted combined Z > 50 sigma",
+      "tags": ["commit", "qpu", "baseline"],
+      "metrics": {
+        "z_score_combined": 50.0,
+        "experiments": 14,
+        "backend": "ibm_marrakesh"
+      },
+      "evidence": {
+        "git_commit": "c3ddc4a",
+        "job_ids": ["marrakesh-pasm-1"]
+      }
+    },
+    {
+      "id": "T2",
+      "type": "T2",
+      "date": "2026-08-04",
+      "description": "Replica 10x: Z = 39.6 sigma, shared MI 0.063 +/- 0.005",
+      "tags": ["replica", "mutual_information"],
+      "metrics": {
+        "z_score_combined": 39.6,
+        "mi_shared": 0.063,
+        "mi_shared_error": 0.005
+      },
+      "evidence": {
+        "job_ids": ["marrakesh-replica-10x"]
+      }
+    },
+    {
+      "id": "pivot",
+      "type": "pivot",
+      "date": "2026-08-04",
+      "description": "Switch to phi-decoupling scan: MI modulated by phi, peak at pi",
+      "tags": ["phi_scan", "phase"],
+      "metrics": {
+        "mi_peak": 0.047,
+        "mi_peak_error": 0.004
+      },
+      "evidence": {
+        "backend": "ibm_kingston"
+      }
+    },
+    {
+      "id": "control",
+      "type": "control",
+      "date": "2026-08-05",
+      "description": "Witness control: MI = 0.00013 (zero), cross-check with DISCORD/QST",
+      "tags": ["witness", "control", "decoherence"],
+      "metrics": {
+        "mi_witness": 0.00013,
+        "mi_qst_discord": 0.728
+      },
+      "evidence": {
+        "job_ids": ["kingston-witness-1", "marrakesh-witness-2"]
+      }
+    },
+    {
+      "id": "milestone",
+      "type": "milestone",
+      "date": "2026-08-06",
+      "description": "Scaling study: MI peaks at 3 qubits (0.159) and remains distance-independent",
+      "tags": ["scaling", "distance", "summary"],
+      "metrics": {
+        "mi_3q": 0.159,
+        "z_distance": 34.0
+      },
+      "evidence": {
+        "git_commit": "pasm-experiments-latest"
+      }
+    },
+    {
+      "id": "submission",
+      "type": "submission",
+      "date": "2026-08-07",
+      "description": "Submitted to JOSS (paper.md + this timeline as research provenance)",
+      "tags": ["joss", "publication"],
+      "evidence": {
+        "data_links": ["https://github.com/Strugiss/research-timeline"]
+      }
+    }
+  ],
+  "created_at": "2026-06-06",
+  "updated_at": "2026-08-08",
+  "version": "1.0"
+}

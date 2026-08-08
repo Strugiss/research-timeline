@@ -1,0 +1,77 @@
+{
+  "@context": "https://schema.org",
+  "@type": "ResearchProject",
+  "name": "PASM DTC Discovery",
+  "description": "Observation of Classical Prethermal DTC on IBM Heron",
+  "author": {
+    "@type": "Person",
+    "name": "N47Lab",
+    "affiliation": "independent",
+    "orcid": null
+  },
+  "dateCreated": "2026-06-06",
+  "dateModified": "2026-08-08",
+  "hasPart": [
+    {
+      "@type": "ResearchEvent",
+      "identifier": "T0",
+      "name": "First AI interaction: setup, theory, protocol design",
+      "startDate": "2026-06-06",
+      "eventType": "T0",
+      "description": "First AI interaction: setup, theory, protocol design"
+    },
+    {
+      "@type": "ResearchEvent",
+      "identifier": "T1",
+      "name": "First commit: 14 QPU experiments, weighted combined Z > 50 sigma",
+      "startDate": "2026-07-31",
+      "eventType": "T1",
+      "description": "First commit: 14 QPU experiments, weighted combined Z > 50 sigma",
+      "measurementTechnique": "z_score_combined: 50.0, experiments: 14, backend: ibm_marrakesh"
+    },
+    {
+      "@type": "ResearchEvent",
+      "identifier": "T2",
+      "name": "Replica 10x: Z = 39.6 sigma, shared MI 0.063 +/- 0.005",
+      "startDate": "2026-08-04",
+      "eventType": "T2",
+      "description": "Replica 10x: Z = 39.6 sigma, shared MI 0.063 +/- 0.005",
+      "measurementTechnique": "z_score_combined: 39.6, mi_shared: 0.063, mi_shared_error: 0.005"
+    },
+    {
+      "@type": "ResearchEvent",
+      "identifier": "pivot",
+      "name": "Switch to phi-decoupling scan: MI modulated by phi, peak at pi",
+      "startDate": "2026-08-04",
+      "eventType": "pivot",
+      "description": "Switch to phi-decoupling scan: MI modulated by phi, peak at pi",
+      "measurementTechnique": "mi_peak: 0.047, mi_peak_error: 0.004"
+    },
+    {
+      "@type": "ResearchEvent",
+      "identifier": "control",
+      "name": "Witness control: MI = 0.00013 (zero), cross-check with DISCORD/QST",
+      "startDate": "2026-08-05",
+      "eventType": "control",
+      "description": "Witness control: MI = 0.00013 (zero), cross-check with DISCORD/QST",
+      "measurementTechnique": "mi_witness: 0.00013, mi_qst_discord: 0.728"
+    },
+    {
+      "@type": "ResearchEvent",
+      "identifier": "milestone",
+      "name": "Scaling study: MI peaks at 3 qubits (0.159) and remains distance-independent",
+      "startDate": "2026-08-06",
+      "eventType": "milestone",
+      "description": "Scaling study: MI peaks at 3 qubits (0.159) and remains distance-independent",
+      "measurementTechnique": "mi_3q: 0.159, z_distance: 34.0"
+    },
+    {
+      "@type": "ResearchEvent",
+      "identifier": "submission",
+      "name": "Submitted to JOSS (paper.md + this timeline as research provenance)",
+      "startDate": "2026-08-07",
+      "eventType": "submission",
+      "description": "Submitted to JOSS (paper.md + this timeline as research provenance)"
+    }
+  ]
+}

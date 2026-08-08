@@ -2,19 +2,23 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21830143.svg)](https://doi.org/10.5281/zenodo.21830143)
 [![CI](https://github.com/Strugiss/research-timeline/actions/workflows/ci.yml/badge.svg)](https://github.com/Strugiss/research-timeline/actions/workflows/ci.yml)
-[![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/)
+[![Python](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![SWH](https://archive.softwareheritage.org/badge/swh:1:snp:dd1f61f06a2728e11da0005d6cef0d49fb37e2f3/)](https://archive.softwareheritage.org/swh:1:snp:dd1f61f06a2728e11da0005d6cef0b49fb37e2f3)
+[![SWH](https://archive.softwareheritage.org/badge/swh:1:snp:dd1f61f06a2728e11da0005d6cef0b49fb37e2f3/)](https://archive.softwareheritage.org/swh:1:snp:dd1f61f06a2728e11da0005d6cef0b49fb37e2f3)
 
-A zero-dependency CLI tool for tracking research progress — designed for independent researchers and small groups.
+Track, visualize, and export research timelines — from first AI interaction to scientific discovery.
+
+`research-timeline` documents the **process** of research, not just its artifacts: every milestone of a project (the first AI interaction that shaped the protocol, the first QPU commit with its evidence, pivots, controls, submissions, publications) is recorded in a single versioned JSON file with typed events, quantitative metrics, and supporting evidence.
 
 ## Features
 
-- **Log entries** with date, title, status, tags, notes
-- **List/filter** by status or tags
-- **Export** to YAML, JSON, or Markdown
-- **Validate** timeline integrity (CI-friendly exit codes)
-- **Simple YAML storage** — human readable, diff-friendly, git-native
+- **Typed events** — `T0`, `T1`…`Tn`, `pivot`, `control`, `submission`, `publication`, `milestone`
+- **Metrics** — attach any quantitative result (z-scores, shots, backend, MI, …) to an event
+- **Evidence** — git commits, IBM Quantum job IDs, data links, code links
+- **AI-role disclosure** — each timeline declares how AI was used (`cognitive_prosthesis`, `co_pilot`, `autonomous_agent`)
+- **Exports** — LaTeX table (papers/reports), Markdown, standalone HTML, schema.org JSON-LD
+- **Validate** — structural checks with CI-friendly exit codes
+- **Simple JSON storage** — human readable, diff-friendly, git-native, zero lock-in
 
 ## Installation
 
@@ -27,50 +31,53 @@ pip install git+https://github.com/Strugiss/research-timeline.git
 ## Usage
 
 ```bash
-# Initialize timeline
-research-timeline init
+# Initialize a timeline
+research-timeline init --output timeline.json
 
-# Log entries
-research-timeline log "Started literature review" -s in_progress -t "literature,review"
-research-timeline log "Completed first draft" -s completed -t "writing" -n "5000 words"
+# Log a typed event (with metrics and evidence)
+research-timeline log T1 --desc "First commit: 14 QPU experiments, Z>50sigma" \
+  --z-combined 50.0 --git-commit c3ddc4a --job-ids abc,def --tags commit,qpu
 
-# List entries
-research-timeline list
-research-timeline list -s completed
-research-timeline list -t literature
+# List events (optionally with metrics)
+research-timeline list --metrics
 
-# Export
-research-timeline export -F md -o timeline.md
-research-timeline export -F json
+# Export to LaTeX (papers), Markdown, HTML, or JSON-LD
+research-timeline export --format latex -o timeline.tex
+research-timeline export --format markdown -o timeline.md
+research-timeline export --format html -o timeline.html
+research-timeline export --format jsonld -o timeline.jsonld
 
 # Validate
 research-timeline validate
 ```
 
-## Status Values
+See [example/timeline.json](example/timeline.json) for a real-world timeline
+(the PASM DTC Discovery project, N47Lab MatterMemory research program) and the
+generated exports in `example/`.
 
-- `pending` — not started
-- `in_progress` — actively working
-- `completed` — done
-- `cancelled` — abandoned
+## Event IDs
+
+`T0`, `T1`, `T2`, …, `Tn` (ordered research phases) plus special events:
+`pivot`, `control`, `submission`, `publication`, `milestone`.
 
 ## File Format
 
-```yaml
-entries:
-  - date: "2024-01-15"
-    title: "Literature review on quantum DTCs"
-    status: completed
-    tags: [literature, quantum, dtc]
-    notes: "Covered 47 papers, identified 3 key gaps"
-  - date: "2024-01-20"
-    title: "Design PASM circuit"
-    status: in_progress
-    tags: [circuit, pasm]
-    notes: "Testing 3-qubit variant"
+A timeline is a single JSON document:
+
+```json
+{
+  "project": {"name": "PASM DTC Discovery", "description": "...", "domain": "quantum"},
+  "author": {"name": "N47Lab", "affiliation": "independent", "ai_role": "cognitive_prosthesis"},
+  "events": [{
+    "id": "T1", "type": "T1", "date": "2026-07-31",
+    "description": "First commit: 14 QPU experiments, Z>50sigma",
+    "metrics": {"z_score_combined": 50.0},
+    "evidence": {"git_commit": "c3ddc4a", "job_ids": ["abc"]}
+  }]
+}
 ```
 
-The file is plain YAML — every part of the research workflow can read it, diff it, and version it.
+The schema is documented in `schema/timeline.schema.json` (JSON Schema draft-07).
 
 ## Development & Contributing
 

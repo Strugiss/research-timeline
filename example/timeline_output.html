@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Research Timeline</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .timeline { position: relative; padding: 20px 0; }
+        .event { position: relative; padding: 15px; margin: 10px 0; background: #1a1f2a; border-radius: 8px; border-left: 4px solid #6fc3df; }
+        .event-id { font-family: monospace; color: #6fc3df; font-weight: bold; }
+        .event-date { color: #8892a8; font-size: 0.9em; }
+        .event-desc { color: #e0e4ee; margin: 8px 0; }
+        .event-metrics { color: #facc15; font-family: monospace; font-size: 0.85em; }
+        .event-tags { margin-top: 8px; }
+        .tag { display: inline-block; background: rgba(111,195,223,0.12); color: #6fc3df; padding: 2px 8px; border-radius: 12px; font-size: 0.75em; margin-right: 4px; }
+    </style>
+</head>
+<body>
+    <h1>Research Timeline</h1>
+    <div class="timeline">
+        <div class="event">
+            <div class="event-id">T0</div>
+            <div class="event-date">2026-06-06</div>
+            <div class="event-desc">First AI interaction: setup, theory, protocol design</div>
+            
+            <div class="event-tags"><span class="tag">setup</span><span class="tag">theory</span><span class="tag">protocol_design</span></div>
+        </div>
+        <div class="event">
+            <div class="event-id">T1</div>
+            <div class="event-date">2026-07-31</div>
+            <div class="event-desc">First commit: 14 QPU experiments, weighted combined Z > 50 sigma</div>
+            <div class="event-metrics">z_score_combined=50.0 | experiments=14 | backend=ibm_marrakesh</div>
+            <div class="event-tags"><span class="tag">commit</span><span class="tag">qpu</span><span class="tag">baseline</span></div>
+        </div>
+        <div class="event">
+            <div class="event-id">T2</div>
+            <div class="event-date">2026-08-04</div>
+            <div class="event-desc">Replica 10x: Z = 39.6 sigma, shared MI 0.063 +/- 0.005</div>
+            <div class="event-metrics">z_score_combined=39.6 | mi_shared=0.063 | mi_shared_error=0.005</div>
+            <div class="event-tags"><span class="tag">replica</span><span class="tag">mutual_information</span></div>
+        </div>
+        <div class="event">
+            <div class="event-id">pivot</div>
+            <div class="event-date">2026-08-04</div>
+            <div class="event-desc">Switch to phi-decoupling scan: MI modulated by phi, peak at pi</div>
+            <div class="event-metrics">mi_peak=0.047 | mi_peak_error=0.004</div>
+            <div class="event-tags"><span class="tag">phi_scan</span><span class="tag">phase</span></div>
+        </div>
+        <div class="event">
+            <div class="event-id">control</div>
+            <div class="event-date">2026-08-05</div>
+            <div class="event-desc">Witness control: MI = 0.00013 (zero), cross-check with DISCORD/QST</div>
+            <div class="event-metrics">mi_witness=0.00013 | mi_qst_discord=0.728</div>
+            <div class="event-tags"><span class="tag">witness</span><span class="tag">control</span><span class="tag">decoherence</span></div>
+        </div>
+        <div class="event">
+            <div class="event-id">milestone</div>
+            <div class="event-date">2026-08-06</div>
+            <div class="event-desc">Scaling study: MI peaks at 3 qubits (0.159) and remains distance-independent</div>
+            <div class="event-metrics">mi_3q=0.159 | z_distance=34.0</div>
+            <div class="event-tags"><span class="tag">scaling</span><span class="tag">distance</span><span class="tag">summary</span></div>
+        </div>
+        <div class="event">
+            <div class="event-id">submission</div>
+            <div class="event-date">2026-08-07</div>
+            <div class="event-desc">Submitted to JOSS (paper.md + this timeline as research provenance)</div>
+            
+            <div class="event-tags"><span class="tag">joss</span><span class="tag">publication</span></div>
+        </div>    </div>
+</body>
+</html>
