@@ -6,9 +6,9 @@ authors:
     orcid: "0009-0008-9201-6080"
 date: 2026-08-09
 version: "v0.2.0"
-doi: "10.5281/zenodo.21830143"
+doi: "10.5281/zenodo.21855315"
 repository: "https://github.com/Strugiss/research-timeline"
-archive_doi: "10.5281/zenodo.21830143"
+archive_doi: "10.5281/zenodo.21855315"
 ---
 
 # Summary
@@ -93,7 +93,7 @@ pytest tests/ -v       # 14 tests
 # References
 
 - Baker, M. (2016) "1,500 scientists lift the lid on reproducibility", Nature 533, 452–454. doi:10.1038/533452a
-- Zenodo archive: 10.5281/zenodo.21830143
+- Zenodo archive: 10.5281/zenodo.21855315 (v0.2.0)
 - Software Heritage archive: `swh:1:snp:62a2f748e52113016cf291c4b8c944e86c6848bf`
 - N47Lab research program (PASM): https://github.com/Strugiss/N47Lab-QuantumResearch
 - JSON Schema draft-07: https://json-schema.org
