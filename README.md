@@ -1,24 +1,24 @@
-# Research Timeline
+﻿# Research Timeline
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21830143.svg)](https://doi.org/10.5281/zenodo.21830143)
 [![CI](https://github.com/Strugiss/research-timeline/actions/workflows/ci.yml/badge.svg)](https://github.com/Strugiss/research-timeline/actions/workflows/ci.yml)
 [![Python](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![SWH](https://archive.softwareheritage.org/badge/swh:1:snp:d60633d275c439b3973b506bb00f4b974e62ec0f/)](https://archive.softwareheritage.org/swh:1:snp:d60633d275c439b3973b506bb00f4b974e62ec0f)
+[![SWH](https://archive.softwareheritage.org/badge/swh:1:snp:62a2f748e52113016cf291c4b8c944e86c6848bf/)](https://archive.softwareheritage.org/swh:1:snp:62a2f748e52113016cf291c4b8c944e86c6848bf)
 
-Track, visualize, and export research timelines — from first AI interaction to scientific discovery.
+Track, visualize, and export research timelines â€” from first AI interaction to scientific discovery.
 
 `research-timeline` documents the **process** of research, not just its artifacts: every milestone of a project (the first AI interaction that shaped the protocol, the first QPU commit with its evidence, pivots, controls, submissions, publications) is recorded in a single versioned JSON file with typed events, quantitative metrics, and supporting evidence.
 
 ## Features
 
-- **Typed events** — `T0`, `T1`…`Tn`, `pivot`, `control`, `submission`, `publication`, `milestone`
-- **Metrics** — attach any quantitative result (z-scores, shots, backend, MI, …) to an event
-- **Evidence** — git commits, IBM Quantum job IDs, data links, code links
-- **AI-role disclosure** — each timeline declares how AI was used (`cognitive_prosthesis`, `co_pilot`, `autonomous_agent`)
-- **Exports** — LaTeX table (papers/reports), Markdown, standalone HTML, schema.org JSON-LD
-- **Validate** — structural checks with CI-friendly exit codes
-- **Simple JSON storage** — human readable, diff-friendly, git-native, zero lock-in
+- **Typed events** â€” `T0`, `T1`â€¦`Tn`, `pivot`, `control`, `submission`, `publication`, `milestone`
+- **Metrics** â€” attach any quantitative result (z-scores, shots, backend, MI, â€¦) to an event
+- **Evidence** â€” git commits, IBM Quantum job IDs, data links, code links
+- **AI-role disclosure** â€” each timeline declares how AI was used (`cognitive_prosthesis`, `co_pilot`, `autonomous_agent`)
+- **Exports** â€” LaTeX table (papers/reports), Markdown, standalone HTML, schema.org JSON-LD
+- **Validate** â€” structural checks with CI-friendly exit codes
+- **Simple JSON storage** â€” human readable, diff-friendly, git-native, zero lock-in
 
 ## Installation
 
@@ -57,7 +57,7 @@ generated exports in `example/`.
 
 ## Event IDs
 
-`T0`, `T1`, `T2`, …, `Tn` (ordered research phases) plus special events:
+`T0`, `T1`, `T2`, â€¦, `Tn` (ordered research phases) plus special events:
 `pivot`, `control`, `submission`, `publication`, `milestone`.
 
 ## File Format
@@ -81,7 +81,7 @@ The schema is documented in `schema/timeline.schema.json` (JSON Schema draft-07)
 
 ## Development & Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) — tests, coding conventions, and governance.
+See [CONTRIBUTING.md](CONTRIBUTING.md) â€” tests, coding conventions, and governance.
 
 ```bash
 pip install -e ".[dev]"
@@ -91,8 +91,8 @@ pytest tests/ -v
 ## Software Heritage
 
 This repository is archived in permanent storage:
-`swh:1:snp:d60633d275c439b3973b506bb00f4b974e62ec0f`
+`swh:1:snp:62a2f748e52113016cf291c4b8c944e86c6848bf`
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT â€” see [LICENSE](LICENSE).
