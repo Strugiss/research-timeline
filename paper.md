@@ -88,5 +88,5 @@ MIT License — see `LICENSE`.
 
 - Baker, M. (2016) "1,500 scientists lift the lid on reproducibility", Nature 533, 452–454. doi:10.1038/533452a
 - Zenodo archive: 10.5281/zenodo.21830143
-- Software Heritage archive of this repository: `swh:1:snp:339028719a13fb1de3d99524c923e66cad65aeda`
+- Software Heritage archive of this repository: `swh:1:snp:dd1f61f06a2728e11da0005d6cef0b49fb37e2f3`
 - N47Lab research program (PASM / MatterMemory): https://github.com/Strugiss/N47Lab-QuantumResearch

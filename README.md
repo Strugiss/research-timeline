@@ -4,7 +4,7 @@
 [![CI](https://github.com/Strugiss/research-timeline/actions/workflows/ci.yml/badge.svg)](https://github.com/Strugiss/research-timeline/actions/workflows/ci.yml)
 [![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![SWH](https://archive.softwareheritage.org/badge/swh:1:snp:33902e719a13fb12e199524c923e66cad65aeda/)](https://archive.softwareheritage.org/swh:1:snp:339028719a13fb1de3d99524c923e66cad65aeda)
+[![SWH](https://archive.softwareheritage.org/badge/swh:1:snp:dd1f61f06a2728e11da0005d6cef0d49fb37e2f3/)](https://archive.softwareheritage.org/swh:1:snp:dd1f61f06a2728e11da0005d6cef0b49fb37e2f3)
 
 A zero-dependency CLI tool for tracking research progress — designed for independent researchers and small groups.
 
@@ -84,7 +84,7 @@ pytest tests/ -v
 ## Software Heritage
 
 This repository is archived in permanent storage:
-`swh:1:snp:339028719a13fb1de3d99524c923e66cad65aeda`
+`swh:1:snp:dd1f61f06a2728e11da0005d6cef0b49fb37e2f3`
 
 ## License
 
