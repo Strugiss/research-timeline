@@ -8,6 +8,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) conv
 ### Changed
 - AI Usage Disclosure wording: review is "by the human author, with AI-assisted
   review for verification" (was "line-by-line") — README, AI_POLICY.md, paper.md
+- Added single-author-with-AI-assistance statement mirroring research-group
+  role distribution (design, implementation, verification, drafting)
 
 ## [v0.2.1] - 2026-08-09
 

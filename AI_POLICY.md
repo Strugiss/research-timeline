@@ -30,6 +30,11 @@ responsible for:
 
 No AI-generated code is merged without human review, understanding, and
 explicit acceptance.
+
+The work was conducted by a single human author with substantial AI
+assistance, mirroring the distribution of roles in a research group (design,
+implementation, verification, drafting), with the human author bearing full
+responsibility for the final result.
 ## Use of AI in this repository's artifacts
 
 - **Code**: AI-generated scaffolding and suggestions, human-reviewed and

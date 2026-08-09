@@ -92,7 +92,7 @@ The schema is documented in `schema/timeline.schema.json` (JSON Schema draft-07)
 
 ## AI Usage Disclosure
 
-This project was developed with the assistance of generative AI tools (interactive AI coding assistants with agentic workflows). AI assistance covered initial code scaffolding, the test suite, and documentation drafting (June–August 2026). All AI-assisted output was reviewed by the human author, with AI-assisted review for verification; design decisions and final acceptance of every change (schema, event types, export contracts, `ai_role` semantics) were made by the human author. Algorithmic behavior is covered by the test suite in `tests/` and by CI. See [AI_POLICY.md](AI_POLICY.md) for the full policy.
+This project was developed with the assistance of generative AI tools (interactive AI coding assistants with agentic workflows). AI assistance covered initial code scaffolding, the test suite, and documentation drafting (June–August 2026). All AI-assisted output was reviewed by the human author, with AI-assisted review for verification; design decisions and final acceptance of every change (schema, event types, export contracts, `ai_role` semantics) were made by the human author. Algorithmic behavior is covered by the test suite in `tests/` and by CI. The work was conducted by a single human author with substantial AI assistance, mirroring the distribution of roles in a research group (design, implementation, verification, drafting), with the human author bearing full responsibility for the final result. See [AI_POLICY.md](AI_POLICY.md) for the full policy.
 
 ## Development & Contributing
 

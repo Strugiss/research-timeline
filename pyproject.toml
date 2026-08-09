@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "research-timeline"
-version = "0.2.2"
+version = "0.2.3"
 description = "Track, visualize, and export research timelines from first AI interaction to scientific discovery"
 readme = "README.md"
 license = {text = "MIT"}

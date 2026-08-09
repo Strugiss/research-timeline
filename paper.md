@@ -50,7 +50,7 @@ This tool was used inside the N47Lab research program on sub-planckian phase-imp
 
 # AI Usage Disclosure
 
-This project used AI assistance during script development and documentation drafting (June–August 2026). All AI-assisted outputs were reviewed by the human author, with AI-assisted review for verification; algorithmic behavior is covered by the test suite in `tests/` and by CI. The design decisions (schema, event types, export contracts, `ai_role` semantics) and final acceptance of every change were made by the human author, with AI as a cognitive prosthesis.
+This project used AI assistance during script development and documentation drafting (June–August 2026). All AI-assisted outputs were reviewed by the human author, with AI-assisted review for verification; algorithmic behavior is covered by the test suite in `tests/` and by CI. The design decisions (schema, event types, export contracts, `ai_role` semantics) and final acceptance of every change were made by the human author, with AI as a cognitive prosthesis. The work was conducted by a single human author with substantial AI assistance, mirroring the distribution of roles in a research group (design, implementation, verification, drafting), with the human author bearing full responsibility for the final result.
 
 # Installation
 
