@@ -19,8 +19,9 @@ were used during development, covering:
 
 ## Human oversight
 
-All AI-assisted output is reviewed line-by-line by the human author before
-it is committed. The human author is responsible for:
+All AI-assisted output is reviewed by the human author, with AI-assisted
+review for verification, before it is committed. The human author is
+responsible for:
 
 - All design decisions (schema, event types, export contracts, `ai_role`
   semantics, CLI surface);
@@ -29,7 +30,6 @@ it is committed. The human author is responsible for:
 
 No AI-generated code is merged without human review, understanding, and
 explicit acceptance.
-
 ## Use of AI in this repository's artifacts
 
 - **Code**: AI-generated scaffolding and suggestions, human-reviewed and

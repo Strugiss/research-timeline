@@ -5,6 +5,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) conv
 
 ## [Unreleased]
 
+### Changed
+- AI Usage Disclosure wording: review is "by the human author, with AI-assisted
+  review for verification" (was "line-by-line") — README, AI_POLICY.md, paper.md
+
+## [v0.2.1] - 2026-08-09
+
+PyPI release. Added pyOpenSci readiness files.
+
 ### Added
 - Issue templates (bug report / feature request) and Pull Request template
 - Contribution guidelines (`CONTRIBUTING.md`)
