@@ -5,7 +5,7 @@ authors:
     affiliation: "N47Lab"
     orcid: "0009-0008-9201-6080"
 date: 2026-08-09
-version: "v0.2.0"
+version: "v0.2.1"
 doi: "10.5281/zenodo.21855315"
 repository: "https://github.com/Strugiss/research-timeline"
 archive_doi: "10.5281/zenodo.21855315"
