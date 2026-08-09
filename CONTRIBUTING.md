@@ -37,7 +37,7 @@ pytest tests/ -v
 
 ## Code of conduct
 
-Be respectful. Harassment of any kind will not be tolerated in issue or PR discussions.
+Be respectful. Harassment of any kind will not be tolerated in issue or PR discussions. See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) and [AI_POLICY.md](AI_POLICY.md) for the full policies.
 
 ## Governance
 

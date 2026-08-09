@@ -23,9 +23,11 @@ Track, visualize, and export research timelines — from first AI interaction to
 ## Installation
 
 ```bash
-pip install -e .
-# or from the archive:
+pip install research-timeline
+# or from source:
 pip install git+https://github.com/Strugiss/research-timeline.git
+# or editable for development:
+pip install -e .
 ```
 
 ## Usage
@@ -78,6 +80,19 @@ A timeline is a single JSON document:
 ```
 
 The schema is documented in `schema/timeline.schema.json` (JSON Schema draft-07).
+
+## Related work
+
+- **Notes/task tools (Notion, Obsidian, Logseq, Trello)** — general-purpose notes or task boards; no typed research phases, no JSON schema, no CI validation, cloud-dependent storage.
+- **Experiment trackers (Weights & Biases, MLflow, DVC)** — track model *runs*, artifacts, and metrics; they do not record researcher-level process events (first insight, pivot, control, submission) nor provide paper-oriented exports (LaTeX).
+- **Notebooks (Jupyter, Quarto)** — rich narrative but unstructured; no enforcement of a timeline schema, no machine-readable JSON-LD export.
+- **Lab notebooks (ELN, Code Ocean)** — heavyweight, instrument-locked, or cloud-bound; too heavy for long-term, single-author project process tracking.
+
+`research-timeline` fills the empty slot: a zero-dependency, git-native, JSON-backed tracker for the research *narrative* with an explicit schema, structured `evidence` fields, and LaTeX/JSON-LD exports for the writing stage.
+
+## AI Usage Disclosure
+
+This project was developed with the assistance of generative AI tools (interactive AI coding assistants with agentic workflows). AI assistance covered initial code scaffolding, the test suite, and documentation drafting (June–August 2026). All AI-assisted output was reviewed line-by-line by the human author, whose design decisions (schema, event types, export contracts, `ai_role` semantics) drove the project; algorithmic behavior is covered by the test suite in `tests/` and by CI. See [AI_POLICY.md](AI_POLICY.md) for the full policy.
 
 ## Development & Contributing
 

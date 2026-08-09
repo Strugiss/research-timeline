@@ -11,6 +11,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) conv
 - CI pipeline (GitHub Actions: pytest + compile check on Python 3.9–3.12)
 - README badges: CI status, Python versions, license, SWHID archive
 - Reproducibility-focused `paper.md` (JOSS-format submission)
+- `CODE_OF_CONDUCT.md` (Contributor Covenant 2.1)
+- `AI_POLICY.md` — generative-AI usage policy (transparency + human oversight)
+- README sections: AI Usage Disclosure, Related work (landscape analysis)
+- Installation via PyPI (`pip install research-timeline`)
 
 ## [v0.2.0] - 2026-08-09
 
