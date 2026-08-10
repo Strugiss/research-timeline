@@ -4,8 +4,8 @@ authors:
   - name: Alessandro Tulli
     affiliation: "N47Lab"
     orcid: "0009-0008-9201-6080"
-date: 2026-08-09
-version: "v0.2.1"
+date: 2026-08-10
+version: "v0.2.3"
 doi: "10.5281/zenodo.21855315"
 repository: "https://github.com/Strugiss/research-timeline"
 archive_doi: "10.5281/zenodo.21855315"
@@ -46,7 +46,7 @@ The tool is a single Python package (Python >= 3.9) with a small API surface:
 
 # Research Impact Statement
 
-This tool was used inside the N47Lab research program on sub-planckian phase-imprint dark-matter candidates explored with phase-anchored state multiplexing (PASM) on IBM Quantum hardware — to record the full process: the first AI interaction that designed the protocol (T0), the first commit with 14 QPU experiments and combined significance (Z > 50 sigma), the replica study (Z = 39.6 sigma), the phi-scan pivot, the witness control (no signal), the QST/discord checks, the distance-independence extension (Z = 34 sigma), the QPU scaling limit (3-qubit peak), and the JOSS submission (2026-08-07). The resulting timeline (`example/timeline.json`) is the authoritative process record of that research, archived with the repository in Software Heritage, and intended as a reusable, tested product for other groups.
+This tool was used inside the N47Lab research program on sub-planckian phase-imprint dark-matter candidates explored with phase-anchored state multiplexing (PASM) on IBM Quantum hardware — to record the full process: the first AI interaction that designed the protocol (T0), the first commit with 14 QPU experiments and combined significance (Z > 50 sigma), the replica study (Z = 39.6 sigma), the phi-scan pivot, the witness control (no signal), the QST/discord checks, the distance-independence extension (Z = 34 sigma), the QPU scaling limit (3-qubit peak), the JOSS submission (2026-08-07), and the Physical Review Letters submission (2026-08-09, manuscript es2026aug09_746). The resulting timeline (`example/timeline.json`) is the authoritative process record of that research, archived with the repository in Software Heritage, and intended as a reusable, tested product for other groups.
 
 # AI Usage Disclosure
 
