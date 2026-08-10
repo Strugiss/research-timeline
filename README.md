@@ -2,11 +2,14 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21855315.svg)](https://doi.org/10.5281/zenodo.21855315)
 [![CI](https://github.com/Strugiss/research-timeline/actions/workflows/ci.yml/badge.svg)](https://github.com/Strugiss/research-timeline/actions/workflows/ci.yml)
+[![Docs](https://github.com/Strugiss/research-timeline/actions/workflows/docs.yml/badge.svg)](https://github.com/Strugiss/research-timeline/actions/workflows/docs.yml)
 [![Python](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![SWH](https://archive.softwareheritage.org/badge/swh:1:snp:62a2f748e52113016cf291c4b8c944e86c6848bf/)](https://archive.softwareheritage.org/swh:1:snp:62a2f748e52113016cf291c4b8c944e86c6848bf)
 
 Track, visualize, and export research timelines — from first AI interaction to scientific discovery.
+
+**Documentation**: <https://strugiss.github.io/research-timeline/>
 
 `research-timeline` documents the **process** of research, not just its artifacts: every milestone of a project (the first AI interaction that shaped the protocol, the first QPU commit with its evidence, pivots, controls, submissions, publications) is recorded in a single versioned JSON file with typed events, quantitative metrics, and supporting evidence.
 
