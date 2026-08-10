@@ -101,9 +101,33 @@
       "evidence": {
         "data_links": ["https://github.com/Strugiss/research-timeline"]
       }
+    },
+    {
+      "id": "T3",
+      "type": "submission",
+      "date": "2026-08-09",
+      "description": "Manuscript submitted to Physical Review Letters (Letter): 'Observation of a Classical Prethermal Discrete Time Crystal on a Superconducting Quantum Processor via Phase-Anchored State Multiplexing'",
+      "tags": ["aps", "prl", "submission"],
+      "metrics": {
+        "n_experiments": 14,
+        "z_combined": 50.0,
+        "n_figures": 2,
+        "manuscript_pages": 3,
+        "supplemental_pages": 2
+      },
+      "evidence": {
+        "manuscript_id": "es2026aug09_746",
+        "section": "L0-04D",
+        "type": "EX+TH",
+        "data_links": [
+          "https://github.com/Strugiss/pasm-experiments",
+          "https://doi.org/10.5281/zenodo.21830151",
+          "https://doi.org/10.5281/zenodo.21855879"
+        ]
+      }
     }
   ],
   "created_at": "2026-06-06",
-  "updated_at": "2026-08-08",
+  "updated_at": "2026-08-10",
   "version": "1.0"
 }
