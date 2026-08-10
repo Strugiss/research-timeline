@@ -7,3 +7,4 @@ test_timeline.yaml
 .env
 dist/
 *.egg-info/
+site/
