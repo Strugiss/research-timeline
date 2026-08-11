@@ -106,6 +106,22 @@ pip install -e ".[dev]"
 pytest tests/ -v
 ```
 
+## Citation
+
+If you use this software in your research, please cite:
+
+```bibtex
+@software{tulli2026research_timeline,
+  author       = {Tulli, Alessandro},
+  title        = {research-timeline: AI-Augmented Research Timeline Tracker},
+  year         = {2026},
+  version      = {v0.2.0},
+  publisher    = {Zenodo},
+  doi          = {10.5281/zenodo.21855315},
+  url          = {https://github.com/Strugiss/research-timeline}
+}
+```
+
 ## Software Heritage
 
 This repository is archived in permanent storage:
