@@ -144,3 +144,65 @@ def test_help():
     r = runner.invoke(app, ["--help"])
     assert r.exit_code == 0
     assert "research-timeline" in r.stdout
+
+
+def test_export_csv():
+    path = _tmp_path()
+    _init(path)
+    runner.invoke(app, ["log", "T0", "--type", "T0", "--desc", "Start", "--tags", "setup", "--file", path])
+    r = runner.invoke(app, ["export", "--format", "csv", "--file", path])
+    assert r.exit_code == 0
+    assert "id,type,date" in r.stdout
+    assert "T0" in r.stdout
+
+
+def test_export_gantt():
+    path = _tmp_path()
+    _init(path)
+    runner.invoke(app, ["log", "T0", "--type", "T0", "--desc", "Start", "--date", "2026-01-01", "--end-date", "2026-01-10", "--file", path])
+    r = runner.invoke(app, ["export", "--format", "gantt", "--file", path])
+    assert r.exit_code == 0
+    assert "tikzpicture" in r.stdout
+    assert "rectangle" in r.stdout
+
+
+def test_log_end_date_stored():
+    path = _tmp_path()
+    _init(path)
+    r = runner.invoke(app, [
+        "log", "T1", "--type", "T1", "--desc", "Range",
+        "--date", "2026-02-01", "--end-date", "2026-02-15", "--file", path,
+    ])
+    assert r.exit_code == 0
+    data = json.load(open(path, encoding="utf-8"))
+    assert data["events"][0]["end_date"] == "2026-02-15"
+
+
+def test_stats():
+    path = _tmp_path()
+    _init(path)
+    runner.invoke(app, ["log", "T0", "--type", "T0", "--desc", "Start", "--date", "2026-01-01", "--file", path])
+    runner.invoke(app, ["log", "T1", "--type", "T1", "--desc", "Run", "--date", "2026-01-15", "--tags", "qpu", "--file", path])
+    r = runner.invoke(app, ["stats", "--file", path])
+    assert r.exit_code == 0
+    assert "Events:      2" in r.stdout
+    assert "14 days" in r.stdout
+    assert "qpu" in r.stdout
+
+
+def test_list_filters():
+    path = _tmp_path()
+    _init(path)
+    runner.invoke(app, ["log", "T0", "--type", "T0", "--desc", "Start", "--date", "2026-01-01", "--tags", "setup", "--file", path])
+    runner.invoke(app, ["log", "T1", "--type", "T1", "--desc", "Run", "--date", "2026-01-15", "--tags", "qpu", "--file", path])
+    r = runner.invoke(app, ["list", "--file", path, "--type", "T1"])
+    assert r.exit_code == 0
+    assert "T1" in r.stdout
+    assert "T0" not in r.stdout
+    r2 = runner.invoke(app, ["list", "--file", path, "--tag", "qpu"])
+    assert r2.exit_code == 0
+    assert "T1" in r2.stdout
+    assert "T0" not in r2.stdout
+    r3 = runner.invoke(app, ["list", "--file", path, "--since", "2026-01-10"])
+    assert r3.exit_code == 0
+    assert "T0" not in r3.stdout

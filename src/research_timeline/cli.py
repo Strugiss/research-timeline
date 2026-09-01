@@ -96,6 +96,7 @@ def log(
     event_id: str = typer.Argument(..., help="Event ID (T0, T1, T2, Tn, pivot, control, etc.)"),
     event_type: str = typer.Option(..., "--type", help="Event type (T0, T1, T2, Tn, pivot, control, submission, publication, milestone)"),
     event_date: str = typer.Option(str(date.today()), "--date", help="Event date (YYYY-MM-DD)"),
+    end_date: Optional[str] = typer.Option(None, "--end-date", help="Optional end date for a range (YYYY-MM-DD)"),
     description: str = typer.Option(..., "--desc", help="Event description"),
     tags: Optional[str] = typer.Option(None, "--tags", help="Tags (comma-separated)"),
     z_score: Optional[float] = typer.Option(None, "--z-score", help="Z-score"),
@@ -136,6 +137,8 @@ def log(
         "description": description,
         "tags": [t.strip() for t in tags.split(",")] if tags else [],
     }
+    if end_date:
+        event["end_date"] = end_date
     
     # Add metrics if provided
     metrics = {}
@@ -176,28 +179,43 @@ def log(
 def list(
     timeline_file: Path = typer.Option(Path(".research-timeline.json"), "--file", "-f", help="Timeline file"),
     show_metrics: bool = typer.Option(False, "--metrics", "-m", help="Show metrics"),
+    event_type: Optional[str] = typer.Option(None, "--type", help="Filter by event type"),
+    tag: Optional[str] = typer.Option(None, "--tag", help="Filter by tag (exact match)"),
+    since: Optional[str] = typer.Option(None, "--since", help="Only events with date >= YYYY-MM-DD"),
+    until: Optional[str] = typer.Option(None, "--until", help="Only events with date <= YYYY-MM-DD"),
 ):
-    """List all events in the timeline."""
+    """List all events in the timeline (with optional filters)."""
     if not Path(timeline_file).exists():
         print(f"[ERROR] Timeline file not found: {timeline_file}")
         raise typer.Exit(1)
-    
+
     with open(timeline_file, 'r', encoding='utf-8') as f:
         timeline = json.load(f)
-    
+
+    events = timeline.get("events", [])
+
+    if event_type:
+        events = [e for e in events if e.get("type") == event_type]
+    if tag:
+        events = [e for e in events if tag in e.get("tags", [])]
+    if since:
+        events = [e for e in events if e.get("date", "") >= since]
+    if until:
+        events = [e for e in events if e.get("date", "") <= until]
+
     # Print as simple text table to avoid Unicode issues on Windows
     print("Research Timeline")
     print("=" * 80)
     header = f"{'ID':<4} | {'Type':<6} | {'Date':<12} | {'Description':<40} | {'Tags':<20} | {'Metrics':<30}"
     print(header)
     print("-" * 120)
-    
-    for event in timeline.get("events", []):
+
+    for event in events:
         metrics_str = ""
         if event.get("metrics"):
             # Replace sigma character for Windows compatibility
             metrics_str = ", ".join(f"{k}={v}".replace('\u03c3', 'sigma') for k, v in event.get("metrics", {}).items() if v is not None)
-        
+
         desc = event["description"][:50]
         tags_str = ", ".join(event.get("tags", []))
         print(f"{event['id']:<4} | {event['type']:<6} | {event['date']:<12} | {desc:<50} | {tags_str:<20} | {metrics_str}")
@@ -205,7 +223,7 @@ def list(
 
 @app.command()
 def export(
-    format: str = typer.Option("latex", "--format", help="Export format: latex, markdown, jsonld, html"),
+    format: str = typer.Option("latex", "--format", help="Export format: latex, markdown, jsonld, html, csv, gantt"),
     timeline_file: Path = typer.Option(Path(".research-timeline.json"), "--file", help="Timeline file"),
     output: Optional[Path] = typer.Option(None, "--output", "-o", help="Output file"),
 ):
@@ -225,6 +243,10 @@ def export(
         output_content = export_jsonld(timeline)
     elif format == "html":
         output_content = export_html(timeline)
+    elif format == "csv":
+        output_content = export_csv(timeline)
+    elif format == "gantt":
+        output_content = export_gantt(timeline)
     else:
         print(f"[ERROR] Unknown format: {format}")
         raise typer.Exit(1)
@@ -235,6 +257,137 @@ def export(
         print(f"[OK] Exported to {output}")
     else:
         print(output_content)
+
+
+def export_csv(timeline: dict) -> str:
+    """Export timeline as CSV (machine-readable, spreadsheet-friendly)."""
+    import csv
+    import io
+    import builtins
+    buf = io.StringIO()
+    w = csv.writer(buf)
+    w.writerow(["id", "type", "date", "description", "tags", "metrics", "evidence"])
+    for event in timeline.get("events", []):
+        metrics = event.get("metrics", {})
+        metrics_str = "; ".join(f"{k}={v}" for k, v in metrics.items() if v is not None)
+        evidence = event.get("evidence", {})
+        ev_parts = []
+        for k, v in evidence.items():
+            if isinstance(v, builtins.list):
+                ev_parts.append(f"{k}: {','.join(v)}")
+            else:
+                ev_parts.append(f"{k}: {v}")
+        w.writerow([
+            event["id"], event["type"], event["date"], event["description"],
+            ";".join(event.get("tags", [])), metrics_str, " | ".join(ev_parts),
+        ])
+    return buf.getvalue()
+
+
+def export_gantt(timeline: dict) -> str:
+    """Export timeline as a publication-ready Gantt chart (LaTeX TikZ).
+
+    Requires \\usepackage{tikz} in the document. Dates are positioned on a
+    horizontal axis; event ranges (start/end) render as bars, point events as
+    markers. Style follows the academic timeline convention.
+    """
+    from datetime import date
+
+    events = timeline.get("events", [])
+    if not events:
+        return "% No events to render."
+    dates = []
+    for e in events:
+        d0 = e.get("date", "")
+        d1 = e.get("end_date") or d0
+        dates.append((d0, d1))
+    start = min(d[0] for d in dates)
+    end = max(d[1] for d in dates)
+
+    def days(a, b):
+        try:
+            return (date.fromisoformat(b) - date.fromisoformat(a)).days
+        except ValueError:
+            return 0
+
+    total = max(days(start, end), 1)
+    n = len(events)
+    row_h = 0.9
+    axis_h = 1.2
+
+    lines = [
+        "% Research Timeline -- Gantt (TikZ). Requires: \\\\usepackage{tikz}",
+        "\\begin{tikzpicture}[x=6cm/%.1f,y=%.2fcm]" % (total, row_h),
+        "  % time axis",
+        f"  \\draw[->] (0,{axis_h}) -- (1.02,{axis_h});",
+    ]
+    # axis labels (start and end)
+    lines.append(f"  \\node[below] at (0,{axis_h}) {{{start}}};")
+    lines.append(f"  \\node[below] at (1,{axis_h}) {{{end}}};")
+
+    for i, (e, (d0, d1)) in enumerate(zip(events, dates)):
+        y = axis_h - (i + 1) * row_h
+        x0 = days(start, d0) / total
+        w = max(days(d0, d1) / total, 0.02)
+        desc = e["description"][:40].replace("&", r"\&").replace("%", r"\%").replace("_", r"\_")
+        # label on the left
+        lines.append(f"  \\node[anchor=east,align=right] at (0,{y:.2f}) {{{e['id']} \\textsc{{{e['type']}}}}};")
+        # bar or marker
+        if d1 != d0:
+            lines.append(f"  \\draw[fill=blue!25] ({x0:.3f},{y:.2f}) rectangle ({x0 + w:.3f},{y + 0.45:.2f});")
+        else:
+            lines.append(f"  \\draw[fill=black] ({x0:.3f},{y + 0.2:.2f}) circle (1.5pt);")
+        # description under the row
+        lines.append(f"  \\node[anchor=west,font=\\scriptsize] at (0,{y - 0.30:.2f}) {{{desc}}};")
+
+    lines.append("\\end{tikzpicture}")
+    return "\n".join(lines)
+
+
+@app.command()
+def stats(
+    timeline_file: Path = typer.Option(Path(".research-timeline.json"), "--file", "-f", help="Timeline file"),
+):
+    """Print summary statistics of the timeline (duration, per-type counts, window)."""
+    if not Path(timeline_file).exists():
+        print(f"[ERROR] Timeline file not found: {timeline_file}")
+        raise typer.Exit(1)
+
+    with open(timeline_file, 'r', encoding='utf-8') as f:
+        timeline = json.load(f)
+
+    events = timeline.get("events", [])
+    if not events:
+        print("No events recorded.")
+        raise typer.Exit(0)
+
+    types = {}
+    for e in events:
+        t = e.get("type", "?")
+        types[t] = types.get(t, 0) + 1
+
+    dates = [e.get("date", "") for e in events if e.get("date")]
+    d0 = min(dates)
+    d1 = max(dates)
+
+    from datetime import date
+    try:
+        days = (date.fromisoformat(d1) - date.fromisoformat(d0)).days
+    except ValueError:
+        days = 0
+
+    print(f"Events:      {len(events)}")
+    print(f"Date window: {d0} .. {d1} ({days} days)")
+    print("By type:")
+    for t, c in sorted(types.items()):
+        print(f"  {t:<14} {c}")
+    print("By tag:")
+    tags = {}
+    for e in events:
+        for tg in e.get("tags", []):
+            tags[tg] = tags.get(tg, 0) + 1
+    for tg, c in sorted(tags.items()):
+        print(f"  {tg:<14} {c}")
 
 
 def export_latex(timeline: dict) -> str:

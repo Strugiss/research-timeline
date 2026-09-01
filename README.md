@@ -24,7 +24,10 @@ Track, visualize, and export research timelines — from first AI interaction to
 - **Metrics** — attach any quantitative result (z-scores, shots, backend, MI, …) to an event
 - **Evidence** — git commits, IBM Quantum job IDs, data links, code links
 - **AI-role disclosure** — each timeline declares how AI was used (`cognitive_prosthesis`, `co_pilot`, `autonomous_agent`)
-- **Exports** — LaTeX table (papers/reports), Markdown, standalone HTML, schema.org JSON-LD
+- **Exports** — LaTeX table (papers/reports), Markdown, standalone HTML, schema.org JSON-LD, CSV, publication-ready Gantt (TikZ)
+- **Filters** — list events by type, tag, or date window (`--type`, `--tag`, `--since`, `--until`)
+- **Stats** — duration window, per-type and per-tag counts (`stats`)
+- **Date ranges** — optional `--end-date` turns a point event into a range (rendered as a bar in the Gantt)
 - **Validate** — structural checks with CI-friendly exit codes
 - **Simple JSON storage** — human readable, diff-friendly, git-native, zero lock-in
 
@@ -46,14 +49,20 @@ research-timeline init --output timeline.json
 research-timeline log T1 --desc "First commit: 14 QPU experiments, Z>50sigma" \
   --z-combined 50.0 --git-commit c3ddc4a --job-ids abc,def --tags commit,qpu
 
-# List events (optionally with metrics)
+# List events (optionally with metrics, filters)
 research-timeline list --metrics
+research-timeline list --type milestone --tag qpu --since 2026-01-01 --until 2026-12-31
 
-# Export to LaTeX (papers), Markdown, HTML, or JSON-LD
+# Summary statistics (duration, per-type, per-tag)
+research-timeline stats
+
+# Export to LaTeX (papers), Markdown, HTML, JSON-LD, CSV, or Gantt (TikZ)
 research-timeline export --format latex -o timeline.tex
 research-timeline export --format markdown -o timeline.md
 research-timeline export --format html -o timeline.html
 research-timeline export --format jsonld -o timeline.jsonld
+research-timeline export --format csv -o timeline.csv
+research-timeline export --format gantt -o timeline_gantt.tex   # publication-ready TikZ
 
 # Validate
 research-timeline validate
