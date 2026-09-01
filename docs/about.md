@@ -27,7 +27,7 @@ so that "how the research happened" is as reproducible as the results themselves
 - **Notebooks (Jupyter, Quarto)** — rich narrative but unstructured, no schema enforcement, no machine-readable JSON-LD export
 - **Lab notebooks (ELN, Code Ocean)** — heavyweight, instrument-locked, or cloud-bound
 
-`research-timeline` fills the empty slot: a **provenance instrument for the research process**.
+`research-timeline` fills a specific slot: a **provenance instrument for the research process**. RETTIFICA (01/09/2026): an earlier claim of uniqueness was retracted - timeline visual tools exist (timeline-fishbone-generator, timeline-maker, SubThesis Timeline Generator, Research-Timeline-Planner, The Timeline Project); this tool differs by design, not by existence.
 
 ## Credits & provenance
 
