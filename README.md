@@ -2,14 +2,19 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21855315.svg)](https://doi.org/10.5281/zenodo.21855315)
 [![CI](https://github.com/Strugiss/research-timeline/actions/workflows/ci.yml/badge.svg)](https://github.com/Strugiss/research-timeline/actions/workflows/ci.yml)
-[![Docs](https://github.com/Strugiss/research-timeline/actions/workflows/docs.yml/badge.svg)](https://github.com/Strugiss/research-timeline/actions/workflows/docs.yml)
 [![Python](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![SWH](https://archive.softwareheritage.org/badge/swh:1:snp:62a2f748e52113016cf291c4b8c944e86c6848bf/)](https://archive.softwareheritage.org/swh:1:snp:62a2f748e52113016cf291c4b8c944e86c6848bf)
 
 Track, visualize, and export research timelines — from first AI interaction to scientific discovery.
 
-**Documentation**: <https://strugiss.github.io/research-timeline/>
+> **RETTIFICA (01/09/2026)**: una precedente asserzione di unicità di questo
+> strumento è stata formulata senza una verifica di mercato documentata. La
+> verifica del 01/09/2026 ha evidenziato strumenti simili esistenti
+> (timeline-fishbone-generator, timeline-maker, SubThesis Timeline Generator,
+> Research-Timeline-Planner, The Timeline Project, altri). Questo strumento non
+> è unico: si distingue per tracciamento AI→scoperta, evidence QPU e disclosure
+> `ai_role`, ma la sua esistenza non è isolata.
 
 `research-timeline` documents the **process** of research, not just its artifacts: every milestone of a project (the first AI interaction that shaped the protocol, the first QPU commit with its evidence, pivots, controls, submissions, publications) is recorded in a single versioned JSON file with typed events, quantitative metrics, and supporting evidence.
 
@@ -26,11 +31,9 @@ Track, visualize, and export research timelines — from first AI interaction to
 ## Installation
 
 ```bash
-pip install research-timeline
-# or from source:
-pip install git+https://github.com/Strugiss/research-timeline.git
-# or editable for development:
 pip install -e .
+# or from the archive:
+pip install git+https://github.com/Strugiss/research-timeline.git
 ```
 
 ## Usage
@@ -84,19 +87,6 @@ A timeline is a single JSON document:
 
 The schema is documented in `schema/timeline.schema.json` (JSON Schema draft-07).
 
-## Related work
-
-- **Notes/task tools (Notion, Obsidian, Logseq, Trello)** — general-purpose notes or task boards; no typed research phases, no JSON schema, no CI validation, cloud-dependent storage.
-- **Experiment trackers (Weights & Biases, MLflow, DVC)** — track model *runs*, artifacts, and metrics; they do not record researcher-level process events (first insight, pivot, control, submission) nor provide paper-oriented exports (LaTeX).
-- **Notebooks (Jupyter, Quarto)** — rich narrative but unstructured; no enforcement of a timeline schema, no machine-readable JSON-LD export.
-- **Lab notebooks (ELN, Code Ocean)** — heavyweight, instrument-locked, or cloud-bound; too heavy for long-term, single-author project process tracking.
-
-`research-timeline` fills the empty slot: a zero-dependency, git-native, JSON-backed tracker for the research *narrative* with an explicit schema, structured `evidence` fields, and LaTeX/JSON-LD exports for the writing stage.
-
-## AI Usage Disclosure
-
-This project was developed with the assistance of generative AI tools (interactive AI coding assistants with agentic workflows). AI assistance covered initial code scaffolding, the test suite, and documentation drafting (June–August 2026). All AI-assisted output was reviewed by the human author, with AI-assisted review for verification; design decisions and final acceptance of every change (schema, event types, export contracts, `ai_role` semantics) were made by the human author. Algorithmic behavior is covered by the test suite in `tests/` and by CI. The work was conducted by a single human author with substantial AI assistance, mirroring the distribution of roles in a research group (design, implementation, verification, drafting), with the human author bearing full responsibility for the final result. See [AI_POLICY.md](AI_POLICY.md) for the full policy.
-
 ## Development & Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) — tests, coding conventions, and governance.
@@ -104,22 +94,6 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) — tests, coding conventions, and govern
 ```bash
 pip install -e ".[dev]"
 pytest tests/ -v
-```
-
-## Citation
-
-If you use this software in your research, please cite:
-
-```bibtex
-@software{tulli2026research_timeline,
-  author       = {Tulli, Alessandro},
-  title        = {research-timeline: AI-Augmented Research Timeline Tracker},
-  year         = {2026},
-  version      = {v0.2.0},
-  publisher    = {Zenodo},
-  doi          = {10.5281/zenodo.21855315},
-  url          = {https://github.com/Strugiss/research-timeline}
-}
 ```
 
 ## Software Heritage

@@ -4,8 +4,8 @@ authors:
   - name: Alessandro Tulli
     affiliation: "N47Lab"
     orcid: "0009-0008-9201-6080"
-date: 2026-08-10
-version: "v0.2.3"
+date: 2026-08-09
+version: "v0.2.0"
 doi: "10.5281/zenodo.21855315"
 repository: "https://github.com/Strugiss/research-timeline"
 archive_doi: "10.5281/zenodo.21855315"
@@ -29,8 +29,9 @@ Existing categories and how this tool differs:
 - **Experiment trackers (Weights & Biases, MLflow, DVC)** — track model *runs*, artifacts, and metrics; they do not record researcher-level process events (first insight, pivot, control, submission) nor provide paper-oriented exports (LaTeX).
 - **Notebooks (Jupyter, Quarto)** — rich narrative but unstructured; no enforcement of a timeline schema, no typed categories, no machine-readable JSON-LD export.
 - **Lab notebooks (ELN, Code Ocean)** — heavyweight, instrument-locked, or cloud-bound; too heavy for long-term, single-author project process tracking.
+- **Timeline generators (timeline-fishbone-generator, timeline-maker, SubThesis Timeline Generator, Research-Timeline-Planner, The Timeline Project)** — produce timeline *visuals* (Gantt, fishbone LaTeX TikZ) or plan multi-year projects; they do not record researcher-level process events with quantitative metrics and evidence, nor provide the AI-role disclosure and JSON-LD provenance that `research-timeline` adds. Verified 01/09/2026; an earlier claim of uniqueness was retracted (see README rettifica).
 
-`research-timeline` fills the empty slot: a zero-dependency, git-native, JSON-backed tracker for the research *narrative* with an explicit schema, structured `evidence` fields, and LaTeX/JSON-LD exports for the writing stage. It is not another task manager — it is a provenance instrument for the research process.
+`research-timeline` fills a specific slot: a zero-dependency, git-native, JSON-backed tracker for the research *narrative* with an explicit schema, structured `evidence` fields, and LaTeX/JSON-LD exports for the writing stage. It is not another task manager — it is a provenance instrument for the research process, and it is not the only timeline tool: it differs by design, not by existence.
 
 # Software Design
 
@@ -46,11 +47,11 @@ The tool is a single Python package (Python >= 3.9) with a small API surface:
 
 # Research Impact Statement
 
-This tool was used inside the N47Lab research program on sub-planckian phase-imprint dark-matter candidates explored with phase-anchored state multiplexing (PASM) on IBM Quantum hardware — to record the full process: the first AI interaction that designed the protocol (T0), the first commit with 14 QPU experiments and combined significance (Z > 50 sigma), the replica study (Z = 39.6 sigma), the phi-scan pivot, the witness control (no signal), the QST/discord checks, the distance-independence extension (Z = 34 sigma), the QPU scaling limit (3-qubit peak), the JOSS submission (2026-08-07), and the Physical Review Letters submission (2026-08-09, manuscript es2026aug09_746). The resulting timeline (`example/timeline.json`) is the authoritative process record of that research, archived with the repository in Software Heritage, and intended as a reusable, tested product for other groups.
+This tool was used inside the N47Lab research program on sub-planckian phase-imprint dark-matter candidates explored with phase-anchored state multiplexing (PASM) on IBM Quantum hardware — to record the full process: the first AI interaction that designed the protocol (T0), the first commit with 14 QPU experiments and combined significance (Z > 50 sigma), the replica study (Z = 39.6 sigma), the phi-scan pivot, the witness control (no signal), the QST/discord checks, the distance-independence extension (Z = 34 sigma), the QPU scaling limit (3-qubit peak), and the JOSS submission (2026-08-07). The resulting timeline (`example/timeline.json`) is the authoritative process record of that research, archived with the repository in Software Heritage, and intended as a reusable, tested product for other groups.
 
 # AI Usage Disclosure
 
-This project used AI assistance during script development and documentation drafting (June–August 2026). All AI-assisted outputs were reviewed by the human author, with AI-assisted review for verification; algorithmic behavior is covered by the test suite in `tests/` and by CI. The design decisions (schema, event types, export contracts, `ai_role` semantics) and final acceptance of every change were made by the human author, with AI as a cognitive prosthesis. The work was conducted by a single human author with substantial AI assistance, mirroring the distribution of roles in a research group (design, implementation, verification, drafting), with the human author bearing full responsibility for the final result.
+This project used AI assistance during script development and documentation drafting (June–August 2026). All AI-assisted outputs were reviewed line-by-line by the human author; algorithmic behavior is covered by the test suite in `tests/` and by CI. The design decisions (schema, event types, export contracts, `ai_role` semantics) were made by the human author, with AI as a cognitive prosthesis.
 
 # Installation
 
