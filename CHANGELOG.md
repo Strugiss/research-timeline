@@ -3,13 +3,53 @@
 All notable changes to research-timeline are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) conventions.
 
-## [Unreleased]
+## [v0.2.5] - 2026-10-08
 
 ### Changed
-- AI Usage Disclosure wording: review is "by the human author, with AI-assisted
-  review for verification" (was "line-by-line") — README, AI_POLICY.md, paper.md
-- Added single-author-with-AI-assistance statement mirroring research-group
-  role distribution (design, implementation, verification, drafting)
+- Quality pass for the pyOpenSci review: `validate` and `log` now perform real
+  JSON Schema (draft-07) validation via `jsonschema` (was basic manual checks);
+  CI runs `ruff` and `mypy`; Python 3.9 dropped (end of life) — `>=3.10`;
+  added `CITATION.cff` and a Citation section in the README; LaTeX/HTML
+  exports escape special characters; timeline may be empty at `init`
+  (schema `minItems: 0`; `orcid` may be null).
+
+## [v0.2.4] - 2026-09-02
+
+### Added
+- `export --format csv` — machine-readable, spreadsheet-friendly export
+- `export --format gantt` — publication-ready Gantt chart (LaTeX TikZ), with
+  optional date ranges (`--end-date`)
+- `list` filters: `--type`, `--tag`, `--since`, `--until`
+- `stats` command: duration window, per-type and per-tag counts
+
+### Changed
+- Version 0.2.4; retired the uniqueness/empty-slot claim (RETTIFICA 01/09/2026):
+  the landscape analysis now lists comparable existing tools
+- README restructured (badges, terminal preview, quick start)
+- AI Usage Disclosure wording finalized ("by the human author, with
+  AI-assisted review for verification") — README, AI_POLICY.md, paper.md
+- Docs CI fix: `[docs]` extra (mkdocs + material) required by the workflow
+- README: AI usage disclosure section and PyPI install (pyOpenSci #338 request)
+
+## [v0.2.3] - 2026-08-09
+
+### Added
+- MkDocs documentation site (Material theme): install, usage, file format,
+  examples, AI disclosure, about — published on GitHub Pages
+- Docs CI workflow; docs badge and link in README
+- Citation with Zenodo DOI (10.5281/zenodo.21862618)
+- Example timeline updated with real events: T3 (PRL submission
+  es2026aug09_746) and T4 (pyOpenSci submission, issue #338)
+
+### Changed
+- Single-author-with-AI-assistance statement mirroring research-group role
+  distribution (design, implementation, verification, drafting)
+
+## [v0.2.2] - 2026-08-09
+
+### Changed
+- Honest AI disclosure wording: AI-assisted review, human responsibility —
+  README, AI_POLICY.md, paper.md
 
 ## [v0.2.1] - 2026-08-09
 

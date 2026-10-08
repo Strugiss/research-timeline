@@ -206,3 +206,65 @@ def test_list_filters():
     r3 = runner.invoke(app, ["list", "--file", path, "--since", "2026-01-10"])
     assert r3.exit_code == 0
     assert "T0" not in r3.stdout
+
+
+def test_validate_detects_bad_date():
+    path = _tmp_path()
+    _init(path)
+    runner.invoke(app, ["log", "T0", "--type", "T0", "--desc", "Ok", "--file", path])
+    data = json.load(open(path, encoding="utf-8"))
+    data["events"][0]["date"] = "2026-13-45"
+    json.dump(data, open(path, "w", encoding="utf-8"))
+    r = runner.invoke(app, ["validate", "--file", path])
+    assert r.exit_code != 0
+    assert "date" in r.stdout.lower()
+
+
+def test_validate_detects_non_scalar_metrics():
+    path = _tmp_path()
+    _init(path)
+    runner.invoke(app, ["log", "T0", "--type", "T0", "--desc", "Ok", "--file", path])
+    data = json.load(open(path, encoding="utf-8"))
+    data["events"][0]["metrics"] = {"modelli": ["a", "b"]}
+    json.dump(data, open(path, "w", encoding="utf-8"))
+    r = runner.invoke(app, ["validate", "--file", path])
+    assert r.exit_code != 0
+
+
+def test_validate_empty_events_ok():
+    path = _tmp_path()
+    _init(path)
+    r = runner.invoke(app, ["validate", "--file", path])
+    assert r.exit_code == 0
+
+
+def test_schema_copies_identical():
+    import hashlib
+    from pathlib import Path
+    root = Path(__file__).resolve().parents[1]
+    a = hashlib.sha256((root / "schema" / "timeline.schema.json").read_bytes()).hexdigest()
+    b = hashlib.sha256(
+        (root / "src" / "research_timeline" / "timeline.schema.json").read_bytes()
+    ).hexdigest()
+    assert a == b
+
+
+def test_export_latex_escapes_special_chars():
+    path = _tmp_path()
+    _init(path)
+    runner.invoke(app, ["log", "T0", "--type", "T0", "--desc", "50% & 100_000 #x", "--file", path])
+    r = runner.invoke(app, ["export", "--format", "latex", "--file", path])
+    assert r.exit_code == 0
+    assert "\\%" in r.stdout
+    assert "\\&" in r.stdout
+    assert "\\_" in r.stdout
+
+
+def test_export_html_escapes_special_chars():
+    path = _tmp_path()
+    _init(path)
+    runner.invoke(app, ["log", "T0", "--type", "T0", "--desc", "<b>bold</b> & more", "--file", path])
+    r = runner.invoke(app, ["export", "--format", "html", "--file", path])
+    assert r.exit_code == 0
+    assert "<b>bold</b>" not in r.stdout
+    assert "&lt;b&gt;" in r.stdout

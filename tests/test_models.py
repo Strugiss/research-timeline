@@ -1,10 +1,10 @@
 import pytest
-from datetime import date
-from research_timeline.models import ResearchTimeline, ProjectInfo, Author, Event, Metrics, Evidence
+
+from research_timeline.models import Event, ResearchTimeline
 
 
 def test_basic_timeline():
-    """Test basic timeline creation."""
+    """Test basic timeline creation (pydantic model validation)."""
     timeline = {
         "project": {
             "name": "Test Project",
@@ -33,15 +33,14 @@ def test_basic_timeline():
         "updated_at": "2026-08-06",
         "version": "1.0"
     }
-    
-    # This would be validated by pydantic in real usage
-    assert True
+
+    model = ResearchTimeline.model_validate(timeline)
+    assert model.project["name"] == "Test Project"
+    assert len(model.events) == 1
 
 
 def test_event_validation():
     """Test event ID validation."""
-    from research_timeline.models import Event
-    
     # Valid IDs
     Event(id="T0", type="T0", date="2026-06-06", description="Test")
     Event(id="T1", type="T1", date="2026-06-06", description="Test")
@@ -51,7 +50,7 @@ def test_event_validation():
     Event(id="submission", type="submission", date="2026-08-01", description="Submission")
     Event(id="publication", type="publication", date="2026-08-01", description="Publication")
     Event(id="milestone", type="milestone", date="2026-08-01", description="Milestone")
-    
+
     # Invalid ID should raise
     try:
         Event(id="X0", type="T0", date="2026-06-06", description="Test")
@@ -62,8 +61,6 @@ def test_event_validation():
 
 def test_metrics_optional():
     """Test that metrics are optional."""
-    from research_timeline.models import Event
-    
     event = Event(
         id="T0",
         type="T0",
@@ -71,7 +68,7 @@ def test_metrics_optional():
         description="Test"
     )
     assert event.metrics is None
-    
+
     # With metrics (as dict)
     event2 = Event(
         id="T1",

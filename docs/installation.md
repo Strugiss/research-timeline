@@ -22,8 +22,8 @@ pip install -e ".[dev]"
 
 ## Requirements
 
-- Python >= 3.9
-- Dependencies: `typer`, `pydantic` (>= 2.5), `rich`
+- Python >= 3.10
+- Dependencies: `typer`, `pydantic` (>= 2.5), `rich`, `jsonschema`
 
 The package is pure Python, offline-friendly, and free of cloud dependencies.
 

@@ -1,7 +1,7 @@
-from typing import Optional, List, Dict, Any
-from pydantic import BaseModel, Field
 from datetime import date
-from enum import Enum
+from typing import Any, Dict, List, Optional
+
+from pydantic import BaseModel, Field
 
 
 class ProjectInfo(BaseModel):
@@ -46,7 +46,7 @@ class Event(BaseModel):
 class ResearchTimeline(BaseModel):
     project: dict = Field(..., description="Project information")
     author: dict = Field(..., description="Author information")
-    events: List[dict] = Field(..., min_length=1, description="Timeline events")
+    events: List[dict] = Field(default_factory=list, description="Timeline events")
     created_at: date = Field(default_factory=date.today, description="Timeline creation date")
     updated_at: date = Field(default_factory=date.today, description="Last update date")
     version: str = Field(default="1.0", description="Timeline schema version")
@@ -92,8 +92,6 @@ if __name__ == "__main__":
             }
         ]
     }
-    print("Schema validation passed!")
-    import json
     print(json.dumps({
         "project": {
             "name": "PASM DTC Discovery",

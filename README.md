@@ -6,7 +6,7 @@
 [![PyPI](https://img.shields.io/pypi/v/research-timeline)](https://pypi.org/project/research-timeline/)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21862618.svg)](https://doi.org/10.5281/zenodo.21862618)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/)
+[![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
 
 `research-timeline` documents the **process** of research, not just its artifacts: every milestone of a project (the first AI interaction that shaped the protocol, the first QPU commit with its evidence, pivots, controls, submissions, publications) is recorded in a single versioned JSON file with typed events, quantitative metrics, and supporting evidence.
 
@@ -99,6 +99,23 @@ capabilities (the `cognitive_prosthesis` role recorded by the tool itself),
 while every decision, review, and responsibility remain human. See
 [docs/ai-disclosure.md](docs/ai-disclosure.md) and [AI_POLICY.md](AI_POLICY.md)
 for the full policy.
+
+## Citation
+
+If you use `research-timeline` in your research, please cite it:
+
+```bibtex
+@software{tulli_research_timeline_2026,
+  author  = {Tulli, Alessandro},
+  title   = {research-timeline: track, validate, and export the research process as a typed JSON timeline},
+  year    = {2026},
+  doi     = {10.5281/zenodo.21862618},
+  url     = {https://github.com/Strugiss/research-timeline},
+  license = {MIT}
+}
+```
+
+A machine-readable citation is provided in [CITATION.cff](CITATION.cff).
 
 ## Community & archive
 

@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+message: "If you use research-timeline in your research, please cite it as below."
+title: "research-timeline: track, validate, and export the research process as a typed JSON timeline"
+abstract: >-
+  research-timeline documents the process of research, not just its artifacts:
+  every milestone of a project (the first AI interaction that shaped the
+  protocol, QPU commits with their evidence, pivots, controls, submissions,
+  publications) is recorded in a single versioned JSON file with typed events,
+  quantitative metrics, and supporting evidence. The timeline validates against
+  a JSON Schema (draft-07), diffs cleanly with git, passes CI, and exports to
+  LaTeX tables, Markdown, standalone HTML, schema.org JSON-LD, CSV, and a
+  publication-ready Gantt chart (TikZ).
+authors:
+  - family-names: Tulli
+    given-names: Alessandro
+    orcid: "https://orcid.org/0009-0008-9201-6080"
+version: 0.2.5
+doi: 10.5281/zenodo.21862618
+date-released: "2026-10-08"
+license: MIT
+repository-code: "https://github.com/Strugiss/research-timeline"
+url: "https://strugiss.github.io/research-timeline/"
+keywords:
+  - research
+  - provenance
+  - reproducibility
+  - open-science
+  - timeline
+  - ai-disclosure

@@ -1,14 +1,11 @@
-import typer
-from typing import Optional, List
-from datetime import date
-from pathlib import Path
+import html
 import json
 import re
-from rich.console import Console
-from rich.table import Table
-from rich import print as rprint
+from datetime import date
+from pathlib import Path
+from typing import List, Optional
 
-from .models import ResearchTimeline, ProjectInfo, Author, Event
+import typer
 
 VALID_EVENT_ID = re.compile(r"^T([0-9]+|n)$|^(pivot|control|submission|publication|milestone)$")
 
@@ -19,10 +16,48 @@ app = typer.Typer(
     no_args_is_help=True,
 )
 
-console = Console()
-
 # Default timeline file
 DEFAULT_TIMELINE_FILE = Path(".research-timeline.json")
+
+_SCHEMA_CANDIDATES = (
+    Path(__file__).resolve().parent / "timeline.schema.json",                 # packaged copy
+    Path(__file__).resolve().parents[2] / "schema" / "timeline.schema.json",  # repo copy
+)
+
+# LaTeX special characters (escaped in table/Gantt exports)
+_LATEX_SPECIAL = {
+    "\\": r"\textbackslash{}",
+    "&": r"\&", "%": r"\%", "$": r"\$", "#": r"\#", "_": r"\_",
+    "{": r"\{", "}": r"\}", "~": r"\textasciitilde{}", "^": r"\textasciicircum{}",
+}
+
+
+def latex_escape(value) -> str:
+    """Escape LaTeX special characters in user-provided text."""
+    return "".join(_LATEX_SPECIAL.get(ch, ch) for ch in str(value))
+
+
+def load_schema() -> dict:
+    """Load the packaged JSON Schema (draft-07); falls back to the repo copy."""
+    for candidate in _SCHEMA_CANDIDATES:
+        if candidate.is_file():
+            with open(candidate, "r", encoding="utf-8") as f:
+                return json.load(f)
+    raise FileNotFoundError(
+        "timeline.schema.json not found (packaged copy or repo schema/)")
+
+
+def validate_timeline(timeline: dict) -> List[str]:
+    """Validate a timeline against the JSON Schema; returns [] if valid."""
+    from jsonschema import Draft7Validator
+    validator = Draft7Validator(load_schema(),
+                                format_checker=Draft7Validator.FORMAT_CHECKER)
+    problems = []
+    for err in sorted(validator.iter_errors(timeline),
+                      key=lambda e: [str(p) for p in e.absolute_path]):
+        where = "/".join(str(p) for p in err.absolute_path) or "(root)"
+        problems.append(f"{where}: {err.message}")
+    return problems
 
 
 def load_timeline(path: Path) -> Optional[dict]:
@@ -62,7 +97,7 @@ def init(
 ):
     """Initialize a new research timeline."""
     from datetime import date
-    
+
     timeline = {
         "project": {
             "name": name,
@@ -81,11 +116,11 @@ def init(
         "updated_at": str(date.today()),
         "version": "1.0"
     }
-    
+
     output_path = Path(output)
     with open(output_path, 'w', encoding='utf-8') as f:
         json.dump(timeline, f, indent=2, ensure_ascii=False)
-    
+
     print(f"[OK] Initialized timeline at {output}")
     print(f"  Project: {name} ({domain})")
     print(f"  Author: {author_name} ({background})")
@@ -113,24 +148,24 @@ def log(
     if not Path(timeline_file).exists():
         print(f"[ERROR] Timeline file not found: {timeline_file}. Run 'init' first.")
         raise typer.Exit(1)
-    
+
     with open(timeline_file, 'r', encoding='utf-8') as f:
         timeline = json.load(f)
-    
+
     # Validate event ID
     event_id = event_id.strip()
     if not VALID_EVENT_ID.match(event_id):
         print("[ERROR] Event ID must match T0, T1, T2, Tn, pivot, control, submission, publication, milestone")
         raise typer.Exit(1)
-    
+
     # Check for duplicate ID
-    for event in timeline.get("events", []):
-        if event.get("id") == event_id:
+    for existing in timeline.get("events", []):
+        if existing.get("id") == event_id:
             print(f"[ERROR] Event ID {event_id} already exists")
             raise typer.Exit(1)
-    
+
     # Build event
-    event = {
+    event: dict = {
         "id": event_id,
         "type": event_type,
         "date": event_date,
@@ -139,9 +174,9 @@ def log(
     }
     if end_date:
         event["end_date"] = end_date
-    
+
     # Add metrics if provided
-    metrics = {}
+    metrics: dict = {}
     if z_score is not None:
         metrics["z_score"] = z_score
     if shots is not None:
@@ -152,9 +187,9 @@ def log(
         metrics["z_score_combined"] = z_score_combined
     if metrics:
         event["metrics"] = {k: v for k, v in metrics.items() if v is not None}
-    
+
     # Evidence
-    evidence = {}
+    evidence: dict = {}
     if git_commit:
         evidence["git_commit"] = git_commit
     if job_ids:
@@ -165,13 +200,20 @@ def log(
         evidence["code_links"] = [c.strip() for tok in code_links for c in tok.split(",") if c.strip()]
     if evidence:
         event["evidence"] = {k: v for k, v in evidence.items() if v}
-    
+
     timeline.setdefault("events", []).append(event)
     timeline["updated_at"] = str(date.today())
-    
+
+    problems = validate_timeline(timeline)
+    if problems:
+        print("[ERROR] Event rejected by schema validation:")
+        for problem in problems:
+            print(f"  [ERROR] {problem}")
+        raise typer.Exit(1)
+
     with open(timeline_file, 'w', encoding='utf-8') as f:
         json.dump(timeline, f, indent=2, ensure_ascii=False)
-    
+
     print(f"[OK] Logged event {event_id}: {description}")
 
 
@@ -231,10 +273,10 @@ def export(
     if not Path(timeline_file).exists():
         print(f"[ERROR] Timeline file not found: {timeline_file}")
         raise typer.Exit(1)
-    
+
     with open(timeline_file, 'r', encoding='utf-8') as f:
         timeline = json.load(f)
-    
+
     if format == "latex":
         output_content = export_latex(timeline)
     elif format == "markdown":
@@ -250,7 +292,7 @@ def export(
     else:
         print(f"[ERROR] Unknown format: {format}")
         raise typer.Exit(1)
-    
+
     if output:
         with open(output, 'w', encoding='utf-8') as f:
             f.write(output_content)
@@ -261,9 +303,9 @@ def export(
 
 def export_csv(timeline: dict) -> str:
     """Export timeline as CSV (machine-readable, spreadsheet-friendly)."""
+    import builtins
     import csv
     import io
-    import builtins
     buf = io.StringIO()
     w = csv.writer(buf)
     w.writerow(["id", "type", "date", "description", "tags", "metrics", "evidence"])
@@ -311,7 +353,6 @@ def export_gantt(timeline: dict) -> str:
             return 0
 
     total = max(days(start, end), 1)
-    n = len(events)
     row_h = 0.9
     axis_h = 1.2
 
@@ -329,9 +370,10 @@ def export_gantt(timeline: dict) -> str:
         y = axis_h - (i + 1) * row_h
         x0 = days(start, d0) / total
         w = max(days(d0, d1) / total, 0.02)
-        desc = e["description"][:40].replace("&", r"\&").replace("%", r"\%").replace("_", r"\_")
+        desc = latex_escape(str(e["description"])[:40])
         # label on the left
-        lines.append(f"  \\node[anchor=east,align=right] at (0,{y:.2f}) {{{e['id']} \\textsc{{{e['type']}}}}};")
+        lines.append(f"  \\node[anchor=east,align=right] at (0,{y:.2f}) "
+                     f"{{{latex_escape(e['id'])} \\textsc{{{latex_escape(e['type'])}}}}};")
         # bar or marker
         if d1 != d0:
             lines.append(f"  \\draw[fill=blue!25] ({x0:.3f},{y:.2f}) rectangle ({x0 + w:.3f},{y + 0.45:.2f});")
@@ -361,7 +403,7 @@ def stats(
         print("No events recorded.")
         raise typer.Exit(0)
 
-    types = {}
+    types: dict = {}
     for e in events:
         t = e.get("type", "?")
         types[t] = types.get(t, 0) + 1
@@ -382,7 +424,7 @@ def stats(
     for t, c in sorted(types.items()):
         print(f"  {t:<14} {c}")
     print("By tag:")
-    tags = {}
+    tags: dict = {}
     for e in events:
         for tg in e.get("tags", []):
             tags[tg] = tags.get(tg, 0) + 1
@@ -402,7 +444,7 @@ def export_latex(timeline: dict) -> str:
         "\\textbf{Phase} & \\textbf{Date} & \\textbf{Event} & \\textbf{Metrics} & \\textbf{Evidence} \\\\",
         "\\midrule",
     ]
-    
+
     for event in timeline.get("events", []):
         metrics = event.get("metrics", {})
         metrics_str = ", ".join(f"{k}={v}" for k, v in metrics.items() if v is not None) if metrics else ""
@@ -412,11 +454,13 @@ def export_latex(timeline: dict) -> str:
             evidence_str += f"git {evidence['git_commit'][:8]} "
         if evidence.get("job_ids"):
             evidence_str += f"jobs: {', '.join(evidence['job_ids'][:3])} "
-        
+
         lines.append(
-            f"{event['id']} & {event['date']} & {event['description'][:50]} & {metrics_str} & {evidence_str} \\\\"
+            f"{latex_escape(event['id'])} & {latex_escape(event['date'])} & "
+            f"{latex_escape(str(event['description'])[:50])} & "
+            f"{latex_escape(metrics_str)} & {latex_escape(evidence_str)} \\\\"
         )
-    
+
     lines.extend([
         "\\bottomrule",
         "\\end{tabular}",
@@ -428,7 +472,7 @@ def export_latex(timeline: dict) -> str:
 def export_markdown(timeline: dict) -> str:
     """Export timeline as Markdown table."""
     lines = ["## Research Timeline", "", "| Phase | Date | Event | Metrics | Evidence |", "|-------|------|-------|---------|----------|"]
-    
+
     for event in timeline.get("events", []):
         metrics = event.get("metrics", {})
         metrics_str = ", ".join(f"{k}={v}" for k, v in metrics.items() if v is not None) if metrics else ""
@@ -438,9 +482,9 @@ def export_markdown(timeline: dict) -> str:
             evidence_str += f"git {evidence['git_commit'][:8]} "
         if evidence.get("job_ids"):
             evidence_str += f"jobs: {', '.join(evidence['job_ids'][:3])} "
-        
+
         lines.append(f"| {event['id']} | {event['date']} | {event['description'][:60]} | {metrics_str} | {evidence_str} |")
-    
+
     return "\n".join(lines)
 
 
@@ -461,7 +505,7 @@ def export_jsonld(timeline: dict) -> str:
         "dateModified": timeline.get("updated_at"),
         "hasPart": []
     }
-    
+
     for event in timeline.get("events", []):
         event_obj = {
             "@type": "ResearchEvent",
@@ -474,13 +518,13 @@ def export_jsonld(timeline: dict) -> str:
         if event.get("metrics"):
             event_obj["measurementTechnique"] = ", ".join(f"{k}: {v}" for k, v in event.get("metrics", {}).items() if v is not None)
         context["hasPart"].append(event_obj)
-    
+
     return json.dumps(context, indent=2, ensure_ascii=False)
 
 
 def export_html(timeline: dict) -> str:
-    """Export as interactive HTML widget."""
-    html = """<!DOCTYPE html>
+    """Export as standalone HTML widget."""
+    out = """<!DOCTYPE html>
 <html>
 <head>
     <title>Research Timeline</title>
@@ -500,30 +544,33 @@ def export_html(timeline: dict) -> str:
 <body>
     <h1>Research Timeline</h1>
     <div class="timeline">"""
-    
+
     for event in timeline.get("events", []):
-        metrics = event.get("metrics", {})
         metrics_html = ""
         if event.get("metrics"):
-            metrics_html = f'<div class="event-metrics">{" | ".join(f"{k}={v}" for k, v in event["metrics"].items() if v is not None)}</div>'
-        
+            metrics_txt = " | ".join(f"{k}={v}" for k, v in event["metrics"].items() if v is not None)
+            metrics_html = f'<div class="event-metrics">{html.escape(metrics_txt)}</div>'
+
         tags_html = ""
         if event.get("tags"):
-            tags_html = '<div class="event-tags">' + "".join(f'<span class="tag">{t}</span>' for t in event["tags"]) + '</div>'
-        
-        html += f"""
+            tags_html = ('<div class="event-tags">'
+                         + "".join(f'<span class="tag">{html.escape(str(t))}</span>'
+                                   for t in event["tags"])
+                         + '</div>')
+
+        out += f"""
         <div class="event">
-            <div class="event-id">{event['id']}</div>
-            <div class="event-date">{event['date']}</div>
-            <div class="event-desc">{event['description']}</div>
+            <div class="event-id">{html.escape(str(event['id']))}</div>
+            <div class="event-date">{html.escape(str(event['date']))}</div>
+            <div class="event-desc">{html.escape(str(event['description']))}</div>
             {metrics_html}
             {tags_html}
         </div>"""
-    
-    html += """    </div>
+
+    out += """    </div>
 </body>
 </html>"""
-    return html
+    return out
 
 
 @app.command()
@@ -534,34 +581,21 @@ def validate(
     if not Path(timeline_file).exists():
         print(f"[ERROR] Timeline file not found: {timeline_file}")
         raise typer.Exit(1)
-    
-    with open(timeline_file, 'r', encoding='utf-8') as f:
-        timeline = json.load(f)
-    
-    # Basic validation
-    errors = []
-    if "project" not in timeline:
-        errors.append("Missing 'project' section")
-    if "author" not in timeline:
-        errors.append("Missing 'author' section")
-    if "events" not in timeline or not timeline["events"]:
-        errors.append("Missing or empty 'events' section")
-    
-    for i, event in enumerate(timeline.get("events", [])):
-        if "id" not in event:
-            errors.append(f"Event {i}: missing 'id'")
-        if "type" not in event:
-            errors.append(f"Event {event.get('id', i)}: missing 'type'")
-        if "date" not in event:
-            errors.append(f"Event {event.get('id', i)}: missing 'date'")
-    
-    if errors:
-        print("[ERROR] Validation failed:")
-        for err in errors:
-            print(f"  [ERROR] {err}")
+
+    try:
+        with open(timeline_file, 'r', encoding='utf-8') as f:
+            timeline = json.load(f)
+    except json.JSONDecodeError as exc:
+        print(f"[ERROR] Invalid JSON: {exc}")
         raise typer.Exit(1)
-    else:
-        print("[OK] Timeline is valid!")
+
+    problems = validate_timeline(timeline)
+    if problems:
+        print("[ERROR] Validation failed:")
+        for problem in problems:
+            print(f"  [ERROR] {problem}")
+        raise typer.Exit(1)
+    print("[OK] Timeline is valid!")
 
 
 if __name__ == "__main__":
