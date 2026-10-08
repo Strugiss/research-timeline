@@ -84,6 +84,22 @@ generated exports in `example/`.
 
 Full documentation: **https://strugiss.github.io/research-timeline/** — install, commands, file format, exports, FAQ.
 
+## AI Usage Disclosure
+
+This package was developed with the assistance of generative AI tools
+(interactive AI coding assistants with agentic workflows): initial code
+scaffolding, the test suite, and documentation drafting (June–August 2026).
+All AI-assisted output was reviewed by the human author, with AI-assisted
+review for verification; design decisions (schema, event types, export
+contracts, `ai_role` semantics) and the final acceptance of every change were
+made by the human author.
+
+This is an **AI-augmented** development model: the AI extends the author's
+capabilities (the `cognitive_prosthesis` role recorded by the tool itself),
+while every decision, review, and responsibility remain human. See
+[docs/ai-disclosure.md](docs/ai-disclosure.md) and [AI_POLICY.md](AI_POLICY.md)
+for the full policy.
+
 ## Community & archive
 
 - pyOpenSci software submission: [issue #338](https://github.com/pyOpenSci/software-submission/issues/338)
