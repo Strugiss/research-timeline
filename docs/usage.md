@@ -61,6 +61,30 @@ Duplicate IDs are rejected.
 | `--code-links` | no | Comma-separated code repository links (evidence) |
 | `--file`, `-f` | no | Timeline file (default `.research-timeline.json`) |
 
+## `edit` — edit an existing event
+
+```bash
+research-timeline edit T1 --desc "Updated description" --tags revised --file timeline.json
+```
+
+Only the fields you pass are changed; the document is validated against the schema before it is written.
+
+| Option | Description |
+|--------|-------------|
+| `--desc` | New description |
+| `--date` | New date (`YYYY-MM-DD`) |
+| `--end-date` | New end date (`YYYY-MM-DD`) |
+| `--tags` | New tags (comma-separated) |
+| `--file`, `-f` | Timeline file |
+
+## `remove` — remove an event
+
+```bash
+research-timeline remove T1 --yes --file timeline.json
+```
+
+Asks for confirmation unless `--yes` is passed.
+
 ## `list` — display events
 
 ```bash
@@ -70,6 +94,11 @@ research-timeline list --metrics --file timeline.json
 | Option | Description |
 |--------|-------------|
 | `--metrics`, `-m` | Also show metrics |
+| `--type` | Filter by event type |
+| `--tag` | Filter by tag (exact match) |
+| `--since` | Only events with date >= `YYYY-MM-DD` |
+| `--until` | Only events with date <= `YYYY-MM-DD` |
+| `--json` | Output the filtered events as JSON |
 | `--file`, `-f` | Timeline file |
 
 ## `export` — export to papers/reports/web
@@ -79,18 +108,24 @@ research-timeline export --format latex -o timeline.tex --file timeline.json
 research-timeline export --format markdown -o timeline.md --file timeline.json
 research-timeline export --format html -o timeline.html --file timeline.json
 research-timeline export --format jsonld -o timeline.jsonld --file timeline.json
+research-timeline export --format csv -o timeline.csv --file timeline.json
+research-timeline export --format gantt -o timeline_gantt.tex --file timeline.json
+research-timeline export --format prov -o timeline_prov.jsonld --file timeline.json
 ```
 
 | Option | Description |
 |--------|-------------|
-| `--format` | `latex`, `markdown`, `html`, `jsonld` (default `latex`) |
+| `--format` | `latex`, `markdown`, `html`, `jsonld`, `csv`, `gantt`, `prov` (default `latex`) |
 | `--output`, `-o` | Output file (default: print to stdout) |
 | `--file`, `-f` | Timeline file |
 
 - **LaTeX** — a `table` environment ready for manuscripts and reports
 - **Markdown** — a portable table for READMEs
-- **HTML** — a standalone interactive widget (Chart.js, no build step)
+- **HTML** — a standalone widget (no build step)
 - **JSON-LD** — schema.org `ResearchProject` metadata for archives and repositories
+- **CSV** — machine-readable, spreadsheet-friendly rows
+- **Gantt** — publication-ready LaTeX TikZ chart (supports `--end-date` ranges)
+- **PROV** — W3C PROV-O provenance graph (JSON-LD): project → `Bundle`, events → `Activity`, evidence → `Entity`, author → `Person`, AI role → `SoftwareAgent`
 
 ## `validate` — check a timeline against the schema
 
@@ -98,4 +133,14 @@ research-timeline export --format jsonld -o timeline.jsonld --file timeline.json
 research-timeline validate --file timeline.json
 ```
 
+Validates against the shipped JSON Schema (draft-07), including ISO-date checks.
 Prints `[OK] Timeline is valid!` on success, or a list of errors with exit code 1 (CI-friendly).
+
+## `stats` — summary statistics
+
+```bash
+research-timeline stats --file timeline.json
+```
+
+Prints the event count, the date window, and per-type / per-tag counts.
+Pass `--json` for machine-readable output.

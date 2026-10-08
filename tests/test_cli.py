@@ -113,10 +113,14 @@ def test_export_latex():
 def test_export_jsonld():
     path = _tmp_path()
     _init(path)
+    runner.invoke(app, ["log", "T0", "--type", "T0", "--desc", "Start",
+                        "--z-score", "5.0", "--file", path])
     r = runner.invoke(app, ["export", "--format", "jsonld", "--file", path])
     assert r.exit_code == 0
     assert '"@context": "https://schema.org"' in r.stdout
     assert '"@type": "ResearchProject"' in r.stdout
+    assert '"@type": "Event"' in r.stdout
+    assert '"additionalProperty"' in r.stdout
 
 
 def test_export_html_to_file():
@@ -268,3 +272,90 @@ def test_export_html_escapes_special_chars():
     assert r.exit_code == 0
     assert "<b>bold</b>" not in r.stdout
     assert "&lt;b&gt;" in r.stdout
+
+
+def test_export_prov():
+    path = _tmp_path()
+    _init(path)
+    runner.invoke(app, ["log", "T1", "--type", "T1", "--desc", "Run",
+                        "--z-score", "5.0", "--git-commit", "abc1234", "--file", path])
+    r = runner.invoke(app, ["export", "--format", "prov", "--file", path])
+    assert r.exit_code == 0
+    assert "prov:Bundle" in r.stdout
+    assert "prov:Person" in r.stdout
+    assert "prov:SoftwareAgent" in r.stdout
+    assert "prov:Activity" in r.stdout
+    assert "prov:Entity" in r.stdout
+    assert "urn:research-timeline:" in r.stdout
+
+
+def test_init_refuses_overwrite_without_force():
+    path = _tmp_path()
+    _init(path)
+    r = runner.invoke(app, [
+        "init", "--name", "X", "--desc", "y", "--author", "z", "--output", path,
+    ], input="n\n")
+    assert r.exit_code != 0
+    data = json.load(open(path, encoding="utf-8"))
+    assert data["project"]["name"] == "Test Project"
+
+
+def test_init_force_overwrites():
+    path = _tmp_path()
+    _init(path)
+    r = runner.invoke(app, [
+        "init", "--name", "Nuovo", "--desc", "y", "--author", "z",
+        "--output", path, "--force",
+    ])
+    assert r.exit_code == 0
+    data = json.load(open(path, encoding="utf-8"))
+    assert data["project"]["name"] == "Nuovo"
+
+
+def test_edit_event():
+    path = _tmp_path()
+    _init(path)
+    runner.invoke(app, ["log", "T0", "--type", "T0", "--desc", "Old", "--file", path])
+    r = runner.invoke(app, ["edit", "T0", "--desc", "New", "--tags", "a,b", "--file", path])
+    assert r.exit_code == 0
+    data = json.load(open(path, encoding="utf-8"))
+    assert data["events"][0]["description"] == "New"
+    assert data["events"][0]["tags"] == ["a", "b"]
+
+
+def test_edit_requires_a_field():
+    path = _tmp_path()
+    _init(path)
+    runner.invoke(app, ["log", "T0", "--type", "T0", "--desc", "Old", "--file", path])
+    r = runner.invoke(app, ["edit", "T0", "--file", path])
+    assert r.exit_code != 0
+
+
+def test_remove_event():
+    path = _tmp_path()
+    _init(path)
+    runner.invoke(app, ["log", "T0", "--type", "T0", "--desc", "X", "--file", path])
+    r = runner.invoke(app, ["remove", "T0", "--yes", "--file", path])
+    assert r.exit_code == 0
+    data = json.load(open(path, encoding="utf-8"))
+    assert data["events"] == []
+
+
+def test_list_json_output():
+    path = _tmp_path()
+    _init(path)
+    runner.invoke(app, ["log", "T0", "--type", "T0", "--desc", "X", "--file", path])
+    r = runner.invoke(app, ["list", "--json", "--file", path])
+    assert r.exit_code == 0
+    parsed = json.loads(r.stdout)
+    assert parsed[0]["id"] == "T0"
+
+
+def test_stats_json_output():
+    path = _tmp_path()
+    _init(path)
+    runner.invoke(app, ["log", "T0", "--type", "T0", "--desc", "X", "--file", path])
+    r = runner.invoke(app, ["stats", "--json", "--file", path])
+    assert r.exit_code == 0
+    parsed = json.loads(r.stdout)
+    assert parsed["events"] == 1

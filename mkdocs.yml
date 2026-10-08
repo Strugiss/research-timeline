@@ -30,6 +30,19 @@ theme:
         icon: material/weather-sunny
         name: Switch to light mode
 
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            docstring_style: google
+            show_source: false
+            show_root_full_path: false
+            members_order: source
+            separate_signature: true
+            show_signature_annotations: true
+
 markdown_extensions:
   - admonition
   - pymdownx.highlight:
@@ -47,5 +60,6 @@ nav:
   - Usage: usage.md
   - File Format: file-format.md
   - Examples: examples.md
+  - API Reference: api.md
   - AI Disclosure: ai-disclosure.md
   - About: about.md

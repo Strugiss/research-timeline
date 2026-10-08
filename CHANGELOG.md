@@ -3,6 +3,27 @@
 All notable changes to research-timeline are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) conventions.
 
+## [v0.3.0] - 2026-10-08
+
+### Added
+- `export --format prov` — W3C PROV-O provenance graph (JSON-LD): project as
+  `prov:Bundle`, events as `prov:Activity`, evidence as `prov:Entity`, author
+  as `prov:Person`, declared AI role as `prov:SoftwareAgent`
+- `edit` command — update an event's description, date, end date, or tags
+  (validated against the schema before writing)
+- `remove` command — remove an event (confirmation prompt; `--yes` to skip)
+- `list --json` and `stats --json` — machine-readable output
+- `init --force` — explicit overwrite; `init` now asks for confirmation when
+  the output file already exists
+- API Reference in the documentation (mkdocstrings); Google-style docstrings
+  across the package
+
+### Changed
+- JSON-LD export now uses valid schema.org types: events are `Event` items
+  with `keywords`, `endDate`, and `additionalProperty` (PropertyValue)
+- Docs: complete export-format list, `edit`/`remove` sections, `stats` and
+  filters documented
+
 ## [v0.2.5] - 2026-10-08
 
 ### Changed

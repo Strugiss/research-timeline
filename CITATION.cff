@@ -14,7 +14,7 @@ authors:
   - family-names: Tulli
     given-names: Alessandro
     orcid: "https://orcid.org/0009-0008-9201-6080"
-version: 0.2.5
+version: 0.3.0
 doi: 10.5281/zenodo.21862618
 date-released: "2026-10-08"
 license: MIT

@@ -1,3 +1,11 @@
+"""research-timeline CLI.
+
+Track, validate, and export research timelines — from first AI interaction to
+scientific discovery. Commands: ``init``, ``log``, ``list``, ``export``,
+``stats``, ``validate``; formats: LaTeX, Markdown, standalone HTML, schema.org
+JSON-LD, W3C PROV-O (JSON-LD), CSV, and TikZ Gantt.
+"""
+
 import html
 import json
 import re
@@ -32,13 +40,29 @@ _LATEX_SPECIAL = {
 }
 
 
-def latex_escape(value) -> str:
-    """Escape LaTeX special characters in user-provided text."""
+def latex_escape(value: object) -> str:
+    """Escape LaTeX special characters in user-provided text.
+
+    Args:
+        value: Text to escape (any object; converted with ``str``).
+
+    Returns:
+        The text with LaTeX special characters replaced by their escapes.
+    """
     return "".join(_LATEX_SPECIAL.get(ch, ch) for ch in str(value))
 
 
 def load_schema() -> dict:
-    """Load the packaged JSON Schema (draft-07); falls back to the repo copy."""
+    """Load the packaged JSON Schema (draft-07).
+
+    Searches the packaged copy first, then the repository ``schema/`` copy.
+
+    Returns:
+        The parsed schema as a dictionary.
+
+    Raises:
+        FileNotFoundError: If no schema copy can be found.
+    """
     for candidate in _SCHEMA_CANDIDATES:
         if candidate.is_file():
             with open(candidate, "r", encoding="utf-8") as f:
@@ -48,7 +72,14 @@ def load_schema() -> dict:
 
 
 def validate_timeline(timeline: dict) -> List[str]:
-    """Validate a timeline against the JSON Schema; returns [] if valid."""
+    """Validate a timeline against the JSON Schema.
+
+    Args:
+        timeline: Parsed timeline document.
+
+    Returns:
+        A list of human-readable problems (empty when the timeline is valid).
+    """
     from jsonschema import Draft7Validator
     validator = Draft7Validator(load_schema(),
                                 format_checker=Draft7Validator.FORMAT_CHECKER)
@@ -94,9 +125,14 @@ def init(
     background: str = typer.Option("without academic degrees", "--background", help="Academic background"),
     ai_role: str = typer.Option("cognitive_prosthesis", "--ai-role", help="AI role"),
     output: Path = typer.Option(Path(".research-timeline.json"), "--output", "-o", help="Output file"),
+    force: bool = typer.Option(False, "--force", help="Overwrite an existing file without asking"),
 ):
-    """Initialize a new research timeline."""
-    from datetime import date
+    """Create a new timeline file with project and author metadata."""
+    output_path = Path(output)
+    if output_path.exists() and not force:
+        if not typer.confirm(f"'{output}' already exists. Overwrite?"):
+            print("[ERROR] Aborted: file exists (use --force to overwrite)")
+            raise typer.Exit(1)
 
     timeline = {
         "project": {
@@ -117,7 +153,6 @@ def init(
         "version": "1.0"
     }
 
-    output_path = Path(output)
     with open(output_path, 'w', encoding='utf-8') as f:
         json.dump(timeline, f, indent=2, ensure_ascii=False)
 
@@ -144,7 +179,13 @@ def log(
     code_links: Optional[List[str]] = typer.Option(None, "--code-links", help="Code links (comma-separated)"),
     timeline_file: Path = typer.Option(Path(".research-timeline.json"), "--file", "-f", help="Timeline file"),
 ):
-    """Log a new event to the timeline."""
+    """Log a new typed event to the timeline.
+
+    The event ID must be unique and match the typed phases (``T0``…``Tn``,
+    ``pivot``, ``control``, ``submission``, ``publication``, ``milestone``).
+    The resulting document is validated against the JSON Schema before it is
+    written; invalid events are rejected without touching the file.
+    """
     if not Path(timeline_file).exists():
         print(f"[ERROR] Timeline file not found: {timeline_file}. Run 'init' first.")
         raise typer.Exit(1)
@@ -218,6 +259,99 @@ def log(
 
 
 @app.command()
+def edit(
+    event_id: str = typer.Argument(..., help="Event ID to edit"),
+    description: Optional[str] = typer.Option(None, "--desc", help="New description"),
+    event_date: Optional[str] = typer.Option(None, "--date", help="New date (YYYY-MM-DD)"),
+    end_date: Optional[str] = typer.Option(None, "--end-date", help="New end date (YYYY-MM-DD)"),
+    tags: Optional[str] = typer.Option(None, "--tags", help="New tags (comma-separated)"),
+    timeline_file: Path = typer.Option(Path(".research-timeline.json"), "--file", "-f", help="Timeline file"),
+):
+    """Edit fields of an existing event (description, date, end date, tags).
+
+    Only the fields you pass are changed. The document is validated against
+    the JSON Schema before it is written.
+    """
+    if description is None and event_date is None and end_date is None and tags is None:
+        print("[ERROR] Nothing to update (pass at least one field)")
+        raise typer.Exit(1)
+    if not Path(timeline_file).exists():
+        print(f"[ERROR] Timeline file not found: {timeline_file}")
+        raise typer.Exit(1)
+
+    with open(timeline_file, 'r', encoding='utf-8') as f:
+        timeline = json.load(f)
+
+    target = None
+    for existing in timeline.get("events", []):
+        if existing.get("id") == event_id.strip():
+            target = existing
+            break
+    if target is None:
+        print(f"[ERROR] Event ID {event_id} not found")
+        raise typer.Exit(1)
+
+    if description is not None:
+        target["description"] = description
+    if event_date is not None:
+        target["date"] = event_date
+    if end_date is not None:
+        target["end_date"] = end_date
+    if tags is not None:
+        target["tags"] = [t.strip() for t in tags.split(",") if t.strip()]
+    timeline["updated_at"] = str(date.today())
+
+    problems = validate_timeline(timeline)
+    if problems:
+        print("[ERROR] Edit rejected by schema validation:")
+        for problem in problems:
+            print(f"  [ERROR] {problem}")
+        raise typer.Exit(1)
+
+    with open(timeline_file, 'w', encoding='utf-8') as f:
+        json.dump(timeline, f, indent=2, ensure_ascii=False)
+    print(f"[OK] Event {event_id} updated")
+
+
+@app.command()
+def remove(
+    event_id: str = typer.Argument(..., help="Event ID to remove"),
+    yes: bool = typer.Option(False, "--yes", "-y", help="Skip the confirmation prompt"),
+    timeline_file: Path = typer.Option(Path(".research-timeline.json"), "--file", "-f", help="Timeline file"),
+):
+    """Remove an event from the timeline (asks for confirmation)."""
+    if not Path(timeline_file).exists():
+        print(f"[ERROR] Timeline file not found: {timeline_file}")
+        raise typer.Exit(1)
+
+    with open(timeline_file, 'r', encoding='utf-8') as f:
+        timeline = json.load(f)
+
+    events = timeline.get("events", [])
+    remaining = [e for e in events if e.get("id") != event_id.strip()]
+    if len(remaining) == len(events):
+        print(f"[ERROR] Event ID {event_id} not found")
+        raise typer.Exit(1)
+    if not yes and not typer.confirm(f"Remove event {event_id}?"):
+        print("[ERROR] Aborted: event not removed")
+        raise typer.Exit(1)
+
+    timeline["events"] = remaining
+    timeline["updated_at"] = str(date.today())
+
+    problems = validate_timeline(timeline)
+    if problems:
+        print("[ERROR] Removal rejected by schema validation:")
+        for problem in problems:
+            print(f"  [ERROR] {problem}")
+        raise typer.Exit(1)
+
+    with open(timeline_file, 'w', encoding='utf-8') as f:
+        json.dump(timeline, f, indent=2, ensure_ascii=False)
+    print(f"[OK] Event {event_id} removed")
+
+
+@app.command()
 def list(
     timeline_file: Path = typer.Option(Path(".research-timeline.json"), "--file", "-f", help="Timeline file"),
     show_metrics: bool = typer.Option(False, "--metrics", "-m", help="Show metrics"),
@@ -225,8 +359,9 @@ def list(
     tag: Optional[str] = typer.Option(None, "--tag", help="Filter by tag (exact match)"),
     since: Optional[str] = typer.Option(None, "--since", help="Only events with date >= YYYY-MM-DD"),
     until: Optional[str] = typer.Option(None, "--until", help="Only events with date <= YYYY-MM-DD"),
+    json_out: bool = typer.Option(False, "--json", help="Output the filtered events as JSON"),
 ):
-    """List all events in the timeline (with optional filters)."""
+    """List events, with optional filters by type, tag, or date window."""
     if not Path(timeline_file).exists():
         print(f"[ERROR] Timeline file not found: {timeline_file}")
         raise typer.Exit(1)
@@ -244,6 +379,10 @@ def list(
         events = [e for e in events if e.get("date", "") >= since]
     if until:
         events = [e for e in events if e.get("date", "") <= until]
+
+    if json_out:
+        print(json.dumps(events, indent=2, ensure_ascii=False))
+        return
 
     # Print as simple text table to avoid Unicode issues on Windows
     print("Research Timeline")
@@ -265,11 +404,13 @@ def list(
 
 @app.command()
 def export(
-    format: str = typer.Option("latex", "--format", help="Export format: latex, markdown, jsonld, html, csv, gantt"),
+    format: str = typer.Option(
+        "latex", "--format",
+        help="Export format: latex, markdown, jsonld, html, csv, gantt, prov"),
     timeline_file: Path = typer.Option(Path(".research-timeline.json"), "--file", help="Timeline file"),
     output: Optional[Path] = typer.Option(None, "--output", "-o", help="Output file"),
 ):
-    """Export timeline to various formats."""
+    """Export the timeline to LaTeX, Markdown, HTML, JSON-LD, PROV-O, CSV, or Gantt (TikZ)."""
     if not Path(timeline_file).exists():
         print(f"[ERROR] Timeline file not found: {timeline_file}")
         raise typer.Exit(1)
@@ -289,6 +430,8 @@ def export(
         output_content = export_csv(timeline)
     elif format == "gantt":
         output_content = export_gantt(timeline)
+    elif format == "prov":
+        output_content = export_prov(timeline)
     else:
         print(f"[ERROR] Unknown format: {format}")
         raise typer.Exit(1)
@@ -302,7 +445,14 @@ def export(
 
 
 def export_csv(timeline: dict) -> str:
-    """Export timeline as CSV (machine-readable, spreadsheet-friendly)."""
+    """Export the timeline as CSV (machine-readable, spreadsheet-friendly).
+
+    Args:
+        timeline: Parsed timeline document.
+
+    Returns:
+        CSV content as a single string (header + one row per event).
+    """
     import builtins
     import csv
     import io
@@ -327,11 +477,16 @@ def export_csv(timeline: dict) -> str:
 
 
 def export_gantt(timeline: dict) -> str:
-    """Export timeline as a publication-ready Gantt chart (LaTeX TikZ).
+    """Export the timeline as a publication-ready Gantt chart (LaTeX TikZ).
 
-    Requires \\usepackage{tikz} in the document. Dates are positioned on a
-    horizontal axis; event ranges (start/end) render as bars, point events as
-    markers. Style follows the academic timeline convention.
+    Requires ``\\usepackage{tikz}``. Point events render as markers; events
+    with an ``end_date`` render as bars.
+
+    Args:
+        timeline: Parsed timeline document.
+
+    Returns:
+        TikZ content as a single string.
     """
     from datetime import date
 
@@ -389,8 +544,9 @@ def export_gantt(timeline: dict) -> str:
 @app.command()
 def stats(
     timeline_file: Path = typer.Option(Path(".research-timeline.json"), "--file", "-f", help="Timeline file"),
+    json_out: bool = typer.Option(False, "--json", help="Output statistics as JSON"),
 ):
-    """Print summary statistics of the timeline (duration, per-type counts, window)."""
+    """Print summary statistics: event count, date window, per-type and per-tag counts."""
     if not Path(timeline_file).exists():
         print(f"[ERROR] Timeline file not found: {timeline_file}")
         raise typer.Exit(1)
@@ -408,32 +564,47 @@ def stats(
         t = e.get("type", "?")
         types[t] = types.get(t, 0) + 1
 
-    dates = [e.get("date", "") for e in events if e.get("date")]
-    d0 = min(dates)
-    d1 = max(dates)
-
-    from datetime import date
-    try:
-        days = (date.fromisoformat(d1) - date.fromisoformat(d0)).days
-    except ValueError:
-        days = 0
-
-    print(f"Events:      {len(events)}")
-    print(f"Date window: {d0} .. {d1} ({days} days)")
-    print("By type:")
-    for t, c in sorted(types.items()):
-        print(f"  {t:<14} {c}")
-    print("By tag:")
     tags: dict = {}
     for e in events:
         for tg in e.get("tags", []):
             tags[tg] = tags.get(tg, 0) + 1
+
+    dates = [e.get("date", "") for e in events if e.get("date")]
+    d0 = min(dates)
+    d1 = max(dates)
+    try:
+        window_days = (date.fromisoformat(d1) - date.fromisoformat(d0)).days
+    except ValueError:
+        window_days = 0
+
+    if json_out:
+        print(json.dumps({
+            "events": len(events),
+            "date_window": {"start": d0, "end": d1, "days": window_days},
+            "by_type": dict(sorted(types.items())),
+            "by_tag": dict(sorted(tags.items())),
+        }, indent=2, ensure_ascii=False))
+        return
+
+    print(f"Events:      {len(events)}")
+    print(f"Date window: {d0} .. {d1} ({window_days} days)")
+    print("By type:")
+    for t, c in sorted(types.items()):
+        print(f"  {t:<14} {c}")
+    print("By tag:")
     for tg, c in sorted(tags.items()):
         print(f"  {tg:<14} {c}")
 
 
 def export_latex(timeline: dict) -> str:
-    """Export timeline as LaTeX table."""
+    """Export the timeline as a LaTeX table (manuscript-ready).
+
+    Args:
+        timeline: Parsed timeline document.
+
+    Returns:
+        The ``table`` environment as a single string.
+    """
     lines = [
         "\\begin{table}[ht]",
         "\\centering",
@@ -470,7 +641,14 @@ def export_latex(timeline: dict) -> str:
 
 
 def export_markdown(timeline: dict) -> str:
-    """Export timeline as Markdown table."""
+    """Export the timeline as a Markdown table (portable, README-friendly).
+
+    Args:
+        timeline: Parsed timeline document.
+
+    Returns:
+        The table as Markdown text.
+    """
     lines = ["## Research Timeline", "", "| Phase | Date | Event | Metrics | Evidence |", "|-------|------|-------|---------|----------|"]
 
     for event in timeline.get("events", []):
@@ -489,7 +667,14 @@ def export_markdown(timeline: dict) -> str:
 
 
 def export_jsonld(timeline: dict) -> str:
-    """Export as JSON-LD for Schema.org."""
+    """Export the timeline as schema.org JSON-LD (``ResearchProject`` + ``Event``).
+
+    Args:
+        timeline: Parsed timeline document.
+
+    Returns:
+        The JSON-LD document as a string.
+    """
     context = {
         "@context": "https://schema.org",
         "@type": "ResearchProject",
@@ -508,22 +693,123 @@ def export_jsonld(timeline: dict) -> str:
 
     for event in timeline.get("events", []):
         event_obj = {
-            "@type": "ResearchEvent",
+            "@type": "Event",
             "identifier": event["id"],
             "name": event["description"],
             "startDate": event["date"],
-            "eventType": event["type"],
             "description": event["description"]
         }
+        if event.get("end_date"):
+            event_obj["endDate"] = event["end_date"]
+        if event.get("tags"):
+            event_obj["keywords"] = event["tags"]
         if event.get("metrics"):
-            event_obj["measurementTechnique"] = ", ".join(f"{k}: {v}" for k, v in event.get("metrics", {}).items() if v is not None)
+            event_obj["additionalProperty"] = [
+                {"@type": "PropertyValue", "name": k, "value": v}
+                for k, v in event["metrics"].items() if v is not None
+            ]
         context["hasPart"].append(event_obj)
 
     return json.dumps(context, indent=2, ensure_ascii=False)
 
 
+def export_prov(timeline: dict) -> str:
+    """Export the timeline as a W3C PROV-O provenance graph (JSON-LD).
+
+    Mapping: project → ``prov:Bundle``; author → ``prov:Person``; declared AI
+    role → ``prov:SoftwareAgent``; events → ``prov:Activity`` (ISO start/end
+    times) associated with both agents; evidence items → ``prov:Entity``
+    generated by their event. Custom ``rt:`` terms carry metrics, tags, type.
+
+    Args:
+        timeline: Parsed timeline document.
+
+    Returns:
+        The PROV-O JSON-LD document as a string.
+    """
+    project = timeline.get("project", {})
+    author = timeline.get("author", {})
+    name = project.get("name", "research-timeline")
+    slug = re.sub(r"[^A-Za-z0-9_-]+", "-", str(name)).strip("-").lower() or "project"
+    base = f"urn:research-timeline:{slug}"
+    ai_role = author.get("ai_role")
+
+    author_entry = {
+        "@id": f"{base}:agent:author",
+        "@type": "prov:Person",
+        "prov:label": author.get("name", ""),
+        "rt:affiliation": author.get("affiliation", ""),
+    }
+    if author.get("orcid"):
+        author_entry["rt:orcid"] = author["orcid"]
+
+    graph = [
+        {
+            "@id": base,
+            "@type": "prov:Bundle",
+            "prov:label": name,
+            "rt:description": project.get("description", ""),
+            "rt:domain": project.get("domain", ""),
+        },
+        author_entry,
+    ]
+    if ai_role:
+        graph.append({
+            "@id": f"{base}:agent:ai",
+            "@type": "prov:SoftwareAgent",
+            "rt:role": ai_role,
+        })
+
+    agents = [f"{base}:agent:author"]
+    if ai_role:
+        agents.append(f"{base}:agent:ai")
+
+    for event in timeline.get("events", []):
+        eid = f"{base}:event:{event.get('id', '?')}"
+        activity = {
+            "@id": eid,
+            "@type": "prov:Activity",
+            "prov:label": event.get("description", ""),
+            "prov:startedAtTime": {"@value": event.get("date", ""), "@type": "xsd:date"},
+            "prov:wasAssociatedWith": agents,
+        }
+        if event.get("end_date"):
+            activity["prov:endedAtTime"] = {"@value": event["end_date"], "@type": "xsd:date"}
+        for key in ("type", "tags", "metrics"):
+            if event.get(key):
+                activity[f"rt:{key}"] = event[key]
+        graph.append(activity)
+        evidence = event.get("evidence") or {}
+        for kind, value in evidence.items():
+            if value:
+                graph.append({
+                    "@id": f"{eid}:evidence:{kind}",
+                    "@type": "prov:Entity",
+                    "rt:kind": kind,
+                    "rt:value": value,
+                    "prov:wasGeneratedBy": eid,
+                })
+
+    doc = {
+        "@context": {
+            "prov": "http://www.w3.org/ns/prov#",
+            "rt": "https://github.com/Strugiss/research-timeline#",
+            "xsd": "http://www.w3.org/2001/XMLSchema#",
+        },
+        "@graph": graph,
+    }
+    return json.dumps(doc, indent=2, ensure_ascii=False)
+
+
 def export_html(timeline: dict) -> str:
-    """Export as standalone HTML widget."""
+    """Export the timeline as a standalone HTML widget (no build step).
+
+    Args:
+        timeline: Parsed timeline document.
+
+    Returns:
+        The HTML document as a single string.
+    """
     out = """<!DOCTYPE html>
 <html>
 <head>
@@ -577,7 +863,7 @@ def export_html(timeline: dict) -> str:
 def validate(
     timeline_file: Path = typer.Option(Path(".research-timeline.json"), "--file", "-f", help="Timeline file"),
 ):
-    """Validate timeline against schema."""
+    """Validate the timeline against the shipped JSON Schema (draft-07)."""
     if not Path(timeline_file).exists():
         print(f"[ERROR] Timeline file not found: {timeline_file}")
         raise typer.Exit(1)

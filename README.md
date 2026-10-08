@@ -51,7 +51,7 @@ By tag:
 | **Typed events** | `T0`, `T1`…`Tn` (ordered research phases) plus `pivot`, `control`, `submission`, `publication`, `milestone` |
 | **Metrics & evidence** | Attach z-scores, shots, backends, IBM Quantum job IDs, git commits, data/code links to any event |
 | **AI-role disclosure** | Each timeline declares how AI was used: `cognitive_prosthesis`, `co_pilot`, `autonomous_agent` |
-| **Exports** | LaTeX table (papers/reports), Markdown, standalone HTML, schema.org JSON-LD, CSV, publication-ready Gantt (TikZ) |
+| **Exports** | LaTeX table (papers/reports), Markdown, standalone HTML, schema.org JSON-LD, W3C PROV-O (JSON-LD), CSV, publication-ready Gantt (TikZ) |
 | **JSON Schema draft-07** | Machine-readable schema (`schema/timeline.schema.json`) with `validate` and CI-friendly exit codes |
 | **Filters & stats** | `--type`, `--tag`, `--since`, `--until`; duration window, per-type and per-tag counts |
 | **Date ranges** | `--end-date` turns a point event into a range (rendered as a bar in the Gantt) |
@@ -72,7 +72,7 @@ research-timeline init -n "My project" -d "What the research is about" -a "Your 
 # 2) log a typed event with metrics and evidence
 research-timeline log T1 --type T1 --desc "First result" --z-score 5.0 --git-commit abc1234 --tags result -f timeline.json
 
-# 3) export (latex | markdown | html | jsonld | csv | gantt)
+# 3) export (latex | markdown | html | jsonld | csv | gantt | prov)
 research-timeline export --format latex -o timeline.tex --file timeline.json
 ```
 

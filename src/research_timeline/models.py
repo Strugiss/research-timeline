@@ -1,3 +1,9 @@
+"""Pydantic models for research-timeline documents.
+
+These models mirror the JSON Schema shipped with the package and can be used
+by downstream tools to validate or construct timelines programmatically.
+"""
+
 from datetime import date
 from typing import Any, Dict, List, Optional
 
@@ -5,12 +11,16 @@ from pydantic import BaseModel, Field
 
 
 class ProjectInfo(BaseModel):
+    """Project metadata: name, description, and research domain."""
+
     name: str = Field(..., description="Project name")
     description: str = Field(..., description="Brief project description")
     domain: str = Field(..., description="Research domain (e.g., quantum, biology, ml, physics, chemistry, materials, computer_science, other)")
 
 
 class Author(BaseModel):
+    """Author metadata, including the declared role of AI (``ai_role``)."""
+
     name: str = Field(..., description="Author name")
     affiliation: str = Field(..., description="Institutional affiliation (or 'independent')")
     orcid: Optional[str] = Field(None, description="ORCID identifier")
@@ -19,6 +29,8 @@ class Author(BaseModel):
 
 
 class Evidence(BaseModel):
+    """Supporting evidence for an event (commits, job IDs, data/code links)."""
+
     git_commit: Optional[str] = Field(None, description="Git commit hash")
     job_ids: List[str] = Field(default_factory=list, description="Related job IDs")
     data_links: List[str] = Field(default_factory=list, description="Links to data repositories")
@@ -26,6 +38,8 @@ class Evidence(BaseModel):
 
 
 class Metrics(BaseModel):
+    """Quantitative metrics for an event (z-scores, shots, backend)."""
+
     z_score: Optional[float] = Field(None, description="Z-score for the event")
     shots: Optional[int] = Field(None, ge=0, description="Number of measurement shots")
     backend: Optional[str] = Field(None, description="Quantum backend used")
@@ -34,6 +48,8 @@ class Metrics(BaseModel):
 
 
 class Event(BaseModel):
+    """A typed timeline event with optional metrics and evidence."""
+
     id: str = Field(..., pattern=r"^T([0-9]+|n)$|^(pivot|control|submission|publication|milestone)$", description="Event identifier (T0, T1, T2, Tn, pivot, control, submission, publication, milestone)")
     event_type: str = Field(..., description="Event type", alias="type")
     event_date: date = Field(..., description="Event date (ISO 8601)", alias="date")
@@ -44,6 +60,8 @@ class Event(BaseModel):
 
 
 class ResearchTimeline(BaseModel):
+    """A complete timeline document (project, author, events)."""
+
     project: dict = Field(..., description="Project information")
     author: dict = Field(..., description="Author information")
     events: List[dict] = Field(default_factory=list, description="Timeline events")
