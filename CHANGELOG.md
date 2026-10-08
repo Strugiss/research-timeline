@@ -24,6 +24,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) conv
 - Docs: complete export-format list, `edit`/`remove` sections, `stats` and
   filters documented
 
+### Notes
+- Archived on Zenodo: [10.5281/zenodo.23247547](https://doi.org/10.5281/zenodo.23247547)
+
 ## [v0.2.5] - 2026-10-08
 
 ### Changed

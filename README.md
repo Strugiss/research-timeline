@@ -4,7 +4,7 @@
 
 [![CI](https://github.com/Strugiss/research-timeline/actions/workflows/ci.yml/badge.svg)](https://github.com/Strugiss/research-timeline/actions/workflows/ci.yml)
 [![PyPI](https://img.shields.io/pypi/v/research-timeline)](https://pypi.org/project/research-timeline/)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21862618.svg)](https://doi.org/10.5281/zenodo.21862618)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23247547.svg)](https://doi.org/10.5281/zenodo.23247547)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
 
@@ -109,7 +109,7 @@ If you use `research-timeline` in your research, please cite it:
   author  = {Tulli, Alessandro},
   title   = {research-timeline: track, validate, and export the research process as a typed JSON timeline},
   year    = {2026},
-  doi     = {10.5281/zenodo.21862618},
+  doi     = {10.5281/zenodo.23247547},
   url     = {https://github.com/Strugiss/research-timeline},
   license = {MIT}
 }
@@ -120,7 +120,7 @@ A machine-readable citation is provided in [CITATION.cff](CITATION.cff).
 ## Community & archive
 
 - pyOpenSci software submission: [issue #338](https://github.com/pyOpenSci/software-submission/issues/338)
-- Archived on Zenodo: [10.5281/zenodo.21862618](https://doi.org/10.5281/zenodo.21862618)
+- Archived on Zenodo: [10.5281/zenodo.23247547](https://doi.org/10.5281/zenodo.23247547)
 - Software Heritage: `swh:1:snp:62a2f748e52113016cf291c4b8c944e86c6848bf`
 
 ## Links
